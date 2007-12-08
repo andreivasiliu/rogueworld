@@ -1,10 +1,18 @@
+# Generic Makefile for RW.
 
-all: main.o comm.o
+BIN = rworld
+OBJ = main.o comm.o protocol.o
+
+
+all: $(BIN)
+
+$(BIN): $(OBJ)
+	gcc -g $^ -o $@
 
 
 %.o: %.c common.h
 	gcc -c -g -Wall $< -o $@
 
 clean:
-	rm -f *.o
+	rm -f $(BIN) $(OBJ)
 

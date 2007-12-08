@@ -33,7 +33,7 @@ void debugf( char *string, ... )
    vsnprintf( buf, 4096, string, args );
    va_end( args );
    
-   printf( "%s", buf );
+   printf( "%s\n", buf );
 }
 
 
