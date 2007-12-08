@@ -10,3 +10,4 @@ RogueWorld is a college project, with the goal to create a multiplayer Roguelike
 In the initial phase, the following aims exist:
   * A *persistent*, *real-time* world server
   * Basic support for rooms, players and objects
+  * An UDP-safe communication [Protocol Specification] (currently just over TCP)
