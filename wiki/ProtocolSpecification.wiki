@@ -1,0 +1,10 @@
+#summary Communication protocol used between RogueWorld clients and the server.
+
+= Design Goals =
+
+Even though initially tested over TCP, the intent is to provide a fast, safe protocol for use with UDP. Packets must be small and error-safe, and subsequent information about an object or aspect of the game should make all previous packets obsolete. The goal is to support a packet loss rate of at least 5-10%.
+
+
+= Current Specification =
+
+*Status*: _Not Even Planned_.
