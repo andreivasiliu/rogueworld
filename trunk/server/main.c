@@ -4,6 +4,9 @@
  *   Andrei Arusoaie (Andrei.Arusoaie@gmail.com)
  */
 
+#include <stdio.h>
+#include <stdarg.h>
+
 #include "common.h"
 
 
@@ -19,6 +22,19 @@ char *map[] =
      "#              #",
      "################",
 };
+
+
+void debugf( char *string, ... )
+{
+   char buf[2048];
+   va_list args;
+   
+   va_start( args, string );
+   vsnprintf( buf, 4096, string, args );
+   va_end( args );
+   
+   printf( "%s", buf );
+}
 
 
 int init_world( )
