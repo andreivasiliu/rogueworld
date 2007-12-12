@@ -24,7 +24,7 @@ int init_server( int port )
    int fd, x = 1;
    
    
-   if ( ( fd = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 )
+   if ( ( fd = socket( PF_INET, SOCK_STREAM, 0 ) ) < 0 )
      {
 	debugf( "init_server: socket: %s.", strerror( errno ) );
 	return -1;
@@ -34,7 +34,7 @@ int init_server( int port )
 		    (char *) &x, sizeof( x ) ) < 0 )
      {
 	debugf( "init_server: SO_REUSEADDR: %s.", strerror( errno ) );
-	shutdown( fd, SHUT_RDWR );
+	close( fd );
 	return -1;
      }
    
@@ -45,14 +45,14 @@ int init_server( int port )
    if ( bind( fd, (struct sockaddr *) &sa, sizeof( sa ) ) < 0 )
      {
 	debugf( "init_server: bind: %s.", strerror( errno ) );
-	shutdown( fd, SHUT_RDWR );
+	close( fd );
 	return -1;
      }
 
    if ( listen( fd, 1 ) < 0 )
      {
 	debugf( "init_server: listen: %s.", strerror( errno ) );
-	shutdown( fd, SHUT_RDWR );
+	close( fd );
 	return -1;
      }
    
@@ -101,7 +101,7 @@ void destroy_connection( CONN *ze_unfortunate )
 {
    CONN *c;
    
-   shutdown( ze_unfortunate->sock, SHUT_RDWR );
+   close( ze_unfortunate->sock );
    
    /* First one in the chain. */
    if ( connections == ze_unfortunate )
