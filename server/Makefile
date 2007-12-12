@@ -1,7 +1,7 @@
 # Generic Makefile for RW.
 
 BIN = rworld
-OBJ = main.o comm.o protocol.o
+OBJ = main.o comm.o protocol.o players.o
 
 
 all: $(BIN)

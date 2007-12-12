@@ -1,4 +1,9 @@
 
+/* Macros */
+
+#define DATA "../data"
+
+
 /* Data structures */
 
 typedef struct player_data PLAYER;
@@ -28,8 +33,13 @@ void debugf( char *, ... );
 
 /* comm.c */
 extern int main_loop( int );
+void kill_connection( CONN *, char * );
+void destroy_connection( CONN * );
 
 /* protocol.c */
 void player_disconnected( PLAYER *, int by_error ); // not here
 void parse_data( CONN *, char *, int );
+
+/* players.c */
+void pl_login( CONN *c, char *name );
 
