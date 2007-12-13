@@ -74,3 +74,15 @@ int receive_one_packet( )
 }
 
 
+
+void send_to_server( char *msg, int bytes )
+{
+   if ( !server_socket )
+     {
+	die( "Trying to send without a socket." );
+	return;
+     }
+   
+   write( server_socket, msg, bytes );
+}
+
