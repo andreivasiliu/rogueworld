@@ -1,4 +1,5 @@
 #summary Communication protocol used between RogueWorld clients and the server.
+#labels Featured
 
 = Design Goals =
 
@@ -22,6 +23,7 @@ Login Protocol:
 = Low-Level Specification =
 
 Pachet Data Types:
+  * *int8: 1 byte
   * *int32*: 4 bytes in network-order (big-endian).
   * *zstring*: null-terminated string.
 
