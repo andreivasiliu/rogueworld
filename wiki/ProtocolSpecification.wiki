@@ -4,7 +4,27 @@
 
 Even though initially tested over TCP, the intent is to provide a fast, safe protocol for use with UDP. Packets must be small and error-safe, and subsequent information about an object or aspect of the game should make all previous packets obsolete. The goal is to support a packet loss rate of at least 5-10%.
 
+*Status*: _Partially Planned_.
 
-= Current Specification =
+= High-Level Specification =
 
-*Status*: _Not Even Planned_.
+Login Protocol:
+  * Client:
+    * send 'login user, password'
+  * Server:
+    * send 'userinfo real_name, position'
+    * send 'map'
+  * Client:
+    * send 'enterworld'
+
+= Low-Level Specification =
+
+Global Pachet Header:
+ `<int32><int32><int32>`
+ ` ^      ^      ^-- message ID`
+ ` |      \-- message number`
+ ` \-- message length`
+
+Login Pachet (oid = MSG_LOGIN):
+ `<string>`
+ ` ^-- name`
