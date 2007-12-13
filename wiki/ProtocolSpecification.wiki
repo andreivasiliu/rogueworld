@@ -8,6 +8,8 @@ Even though initially tested over TCP, the intent is to provide a fast, safe pro
 
 = High-Level Specification =
 
+In case of any errors (e.g. invalid user/password), the communication will end with a Close pachet.
+
 Login Protocol:
   * Client:
     * send 'login user, password'
@@ -19,12 +21,47 @@ Login Protocol:
 
 = Low-Level Specification =
 
-Global Pachet Header:
- `<int32><int32><int32>`
- ` ^      ^      ^-- message ID`
- ` |      \-- message number`
- ` \-- message length`
+Pachet Data Types:
+  * *int32*: 4 bytes in network-order (big-endian).
+  * *zstring*: null-terminated string.
 
-Login Pachet (oid = MSG_LOGIN):
- `<string>`
- ` ^-- name`
+Global Pachet Header:
+{{{
+ <int32><int32><int32>
+  ^      ^      ^-- message ID (mid)
+  |      \-- message number
+  \-- message length
+}}}
+
+Login Pachet (_client_) (mid = MSG_LOGIN):
+{{{
+ <zstring>
+  ^-- name
+}}}
+
+Close Pachet (_both_) (mid = MSG_CLOSE):
+{{{
+ <zstring>
+  ^-- reason
+}}}
+
+UserInfo Pachet (_server_) (mid = MSG_USERINFO):
+{{{
+ <zstring><int8><int8>
+  ^        ^     ^-- position x on map
+  |        \-- position y on map
+  \-- properly capitalized player-name
+}}}
+
+Map Pachet (_server_) (mid = MSG_MAP):
+{{{
+ <int8><int8><zstring>
+  ^     ^     ^-- RLE-encoded map representation
+  |     \-- map width
+  \-- map height
+}}}
+
+EnterWorld (_client_) (mid = MSG_ENTERWORLD)
+{{{
+ <empty>
+}}}
