@@ -155,3 +155,13 @@ void pl_login( CONN *c, char *name )
    
 }
 
+
+void pl_disconnected( PLAYER *player, int by_error )
+{
+   /* Do we care? */
+   if ( !player )
+     return;
+   
+   
+}
+
