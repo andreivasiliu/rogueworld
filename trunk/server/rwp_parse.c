@@ -23,15 +23,15 @@ char *get_word( char *src, int *src_length, char *dest )
 }
 
 
-void parse_pachet( CONN *c, char *pachet, int size )
+void parse_packet( CONN *c, char *packet, int size )
 {
    char buf[1024];
    
-   pachet = get_word( pachet, &size, buf );
+   packet = get_word( packet, &size, buf );
    
    if ( !strcmp( buf, "login" ) )
      {
-	get_word( pachet, &size, buf );
+	get_word( packet, &size, buf );
 	
 	pl_login( c, buf );
      }
@@ -43,7 +43,7 @@ void parse_data( CONN *c, char *data, int size )
    printf( "Received %d bytes:\n", size );
    write( 1, data, size );
    
-   parse_pachet( c, data, size );
+   parse_packet( c, data, size );
 }
 
 

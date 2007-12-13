@@ -1,4 +1,4 @@
-/* RogueWorld Communication protocol. This will format data into pachets and
+/* RogueWorld Communication protocol. This will format data into packets and
  * send it to the network. */
 
 
@@ -8,7 +8,7 @@
 
 void kill_connection( CONN *c, char *msg )
 {
-   // send kill pachet and message
+   // send kill packet and message
    
    destroy_connection( c );
 }
