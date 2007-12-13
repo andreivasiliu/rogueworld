@@ -3,7 +3,7 @@
 
 = Design Goals =
 
-Even though initially tested over TCP, the intent is to provide a fast, safe protocol for use with UDP. Packets must be small and error-safe, and subsequent information about an object or aspect of the game should make all previous packets obsolete. The goal is to support a packet loss rate of at least 5-10%.
+Even though initially tested over TCP, the intent is to provide a fast, safe protocol for use with UDP. Packets must be small and error-safe, and subsequent information about an object or aspect of the game should make all such previous packets obsolete. The goal is to support a packet loss rate of at least 5-10%.
 
 *Status*: _Partially Planned_.
 
@@ -23,7 +23,7 @@ Login Protocol:
 = Low-Level Specification =
 
 Pachet Data Types:
-  * *int8: 1 byte
+  * *int8*: 1 byte
   * *int32*: 4 bytes in network-order (big-endian).
   * *zstring*: null-terminated string.
 
