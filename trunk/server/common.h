@@ -33,13 +33,15 @@ void debugf( char *, ... );
 
 /* comm.c */
 extern int main_loop( int );
-void kill_connection( CONN *, char * );
 void destroy_connection( CONN * );
 
-/* protocol.c */
-void player_disconnected( PLAYER *, int by_error ); // not here
+/* rwp_parse.c */
 void parse_data( CONN *, char *, int );
+
+/* rwp_send */
+void kill_connection( CONN *, char * );
 
 /* players.c */
 void pl_login( CONN *c, char *name );
+void pl_disconnected( PLAYER *, int by_error );
 

@@ -1,5 +1,5 @@
-/* Communication protocol. This will parse data from the network,
- * and format data to send to the network. */
+/* RogueWorld Communication protocol. This will parse data from the
+ * network. */
 
 
 #include <stdio.h> // must disappear
@@ -8,17 +8,6 @@
 #include <unistd.h>
 
 #include "common.h"
-
-
-// This belongs in player handling, not here. Temporary.
-void player_disconnected( PLAYER *player, int by_error )
-{
-   /* Do we care? */
-   if ( !player )
-     return;
-   
-   
-}
 
 
 // Temporary.
@@ -57,11 +46,4 @@ void parse_data( CONN *c, char *data, int size )
    parse_pachet( c, data, size );
 }
 
-
-void kill_connection( CONN *c, char *msg )
-{
-   // send kill pachet and message
-   
-   destroy_connection( c );
-}
 

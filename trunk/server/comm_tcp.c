@@ -133,7 +133,7 @@ int read_data( CONN *conn )
    /* Connection error. */
    if ( bytes < 0 )
      {
-	player_disconnected( conn->player, 1 );
+	pl_disconnected( conn->player, 1 );
 	destroy_connection( conn );
 	
 	return 0;
@@ -141,7 +141,7 @@ int read_data( CONN *conn )
    /* Connection closed. */
    if ( bytes == 0 )
      {
-	player_disconnected( conn->player, 0 );
+	pl_disconnected( conn->player, 0 );
 	destroy_connection( conn );
 	
 	return 0;
