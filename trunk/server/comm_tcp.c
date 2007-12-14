@@ -21,6 +21,13 @@
 CONN *connections;
 
 
+#if defined(WIN32)
+# define CLOSE(sock)	closesocket(sock)
+#else
+# define CLOSE(sock)	close(sock)
+#endif
+
+
 int init_server( int port )
 {
    static struct sockaddr_in sa_zero;
@@ -59,7 +66,7 @@ int init_server( int port )
 		    (char *) &x, sizeof( x ) ) < 0 )
      {
 	debugf( "init_server: SO_REUSEADDR: %s.", strerror( errno ) );
-	close( fd );
+	CLOSE( fd );
 	return -1;
      }
    
@@ -70,14 +77,14 @@ int init_server( int port )
    if ( bind( fd, (struct sockaddr *) &sa, sizeof( sa ) ) < 0 )
      {
 	debugf( "init_server: bind: %s.", strerror( errno ) );
-	close( fd );
+	CLOSE( fd );
 	return -1;
      }
 
    if ( listen( fd, 1 ) < 0 )
      {
 	debugf( "init_server: listen: %s.", strerror( errno ) );
-	close( fd );
+	CLOSE( fd );
 	return -1;
      }
    
@@ -124,7 +131,7 @@ void destroy_connection( CONN *ze_unfortunate )
 {
    CONN *c;
    
-   close( ze_unfortunate->sock );
+   CLOSE( ze_unfortunate->sock );
    
    /* First one in the chain. */
    if ( connections == ze_unfortunate )
@@ -173,6 +180,12 @@ int read_data( CONN *conn )
    parse_data( conn, buf, bytes );
    
    return 0;
+}
+
+
+void send_to_client( CONN *c, char *data, int bytes )
+{
+   write( c->sock, data, bytes );
 }
 
 

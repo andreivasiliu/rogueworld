@@ -2,48 +2,52 @@
  * network. */
 
 
-#include <stdio.h> // must disappear
-#include <ctype.h> // this too
-#include <string.h> // this three
-#include <unistd.h>
-
 #include "common.h"
+#include "rwp_common.h"
 
-
-// Temporary.
-char *get_word( char *src, int *src_length, char *dest )
-{
-   while ( isspace( *src ) && *src_length > 0 )
-     src++, (*src_length)--;
-   
-   while ( !isspace( *src ) && *src_length > 0 )
-     *(dest++) = *(src++), (*src_length)--;
-   
-   return src;
-}
 
 
 void parse_packet( CONN *c, char *packet, int size )
 {
-   char buf[1024];
+   int msg_size, msg_number, mid;
+   char buf[1024], *p = packet;
    
-   packet = get_word( packet, &size, buf );
+   // On the switch to UDP, check size for validity.
    
-   if ( !strcmp( buf, "login" ) )
+   p = read_int32( p, &msg_size );
+   p = read_int32( p, &msg_number );
+   p = read_int32( p, &mid );
+   
+   debugf( "Received packet %d (size=%d, mid=%d).", msg_number, msg_size, mid );
+   
+   if ( mid == MSG_LOGIN )
      {
-	get_word( packet, &size, buf );
-	
+	p = read_zstring( p, buf, 1024 );
+	debugf( "Read [%s].", buf );
 	pl_login( c, buf );
      }
+   else
+     debugf( "Message ID (%d) unknown.", mid );
 }
 
 
 void parse_data( CONN *c, char *data, int size )
 {
-   printf( "Received %d bytes:\n", size );
-   write( 1, data, size );
+   int packet_size;
    
-   parse_packet( c, data, size );
+   read_int32( data, &packet_size );
+   
+   if ( packet_size == size )
+     {
+	parse_packet( c, data, packet_size );
+	data += packet_size;
+	size -= packet_size;
+     }
+   else
+     {
+	debugf( "Warning: packet pattern is becoming corrupt." );
+	debugf( "Reported size: %d. Actual size: %d.", packet_size, size );
+     }
 }
 
 
