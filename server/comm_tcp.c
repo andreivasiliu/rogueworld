@@ -3,9 +3,13 @@
  */
 
 
-#include <sys/socket.h>
-#include <sys/select.h>
-#include <arpa/inet.h>
+#if !defined(WIN32)
+# include <sys/socket.h>
+# include <sys/select.h>
+# include <arpa/inet.h>
+#else
+# include <winsock2.h>
+#endif
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -23,6 +27,27 @@ int init_server( int port )
    struct sockaddr_in sa;
    int fd, x = 1;
    
+#if defined(WIN32)
+     {
+        /* Initialize WSA. */
+        WORD wVersionRequested;
+        WSADATA wsaData;
+        wVersionRequested = MAKEWORD( 1, 0 );
+        
+        if ( WSAStartup( wVersionRequested, &wsaData ) )
+          {
+             return 0;
+          }
+        
+        if ( LOBYTE( wsaData.wVersion ) != 1 ||
+             HIBYTE( wsaData.wVersion ) != 0 )
+          {
+             WSACleanup( );
+             return 0;
+          }
+        /* End of WSA. */
+     }
+#endif
    
    if ( ( fd = socket( PF_INET, SOCK_STREAM, 0 ) ) < 0 )
      {
@@ -63,7 +88,6 @@ int init_server( int port )
 int new_connection( int control )
 {
    struct sockaddr_in addr;
-   char buf[2048];
    unsigned int size;
    int desc;
    CONN *c;
@@ -75,8 +99,7 @@ int new_connection( int control )
 	return 1;
      }
    
-   inet_ntop( AF_INET, &addr.sin_addr, buf, 2048 );
-   debugf( "New connection: %s", buf );
+   debugf( "New connection: %s", inet_ntoa( addr.sin_addr ) );
    
    /* In future, we could resolve it:
     * from = gethostbyaddr( (char *) &sock.sin_addr,
