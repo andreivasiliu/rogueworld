@@ -34,6 +34,7 @@ void debugf( char *, ... );
 /* comm.c */
 extern int main_loop( int );
 void destroy_connection( CONN * );
+void send_to_client( CONN *, char *, int );
 
 /* rwp_parse.c */
 void parse_data( CONN *, char *, int );
