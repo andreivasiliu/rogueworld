@@ -23,7 +23,6 @@ void parse_packet( CONN *c, char *packet, int size )
    if ( mid == MSG_LOGIN )
      {
 	p = read_zstring( p, buf, 1024 );
-	debugf( "Read [%s].", buf );
 	pl_login( c, buf );
      }
    else

@@ -86,3 +86,30 @@ void send_to_server( char *msg, int bytes )
    write( server_socket, msg, bytes );
 }
 
+
+int main_loop( )
+{
+   fd_set in_set;
+   int max_fd;
+   
+   while( 1 )
+     {
+	FD_ZERO( &in_set );
+	
+	/* Socket events. */
+	FD_SET( server_socket, &in_set );
+	/* Keyboard (stdin) events. */
+	FD_SET( 0, &in_set );
+	
+	/* I think it's safe to say that, whatever the value, it's > 0. */
+	max_fd = server_socket;
+	
+	select( max_fd + 1, &in_set, NULL, NULL, NULL );
+	
+	if ( FD_ISSET( server_socket, &in_set ) )
+	  receive_one_packet( );
+	else if ( FD_ISSET( 0, &in_set ) )
+	  key_event( );
+     }
+}
+

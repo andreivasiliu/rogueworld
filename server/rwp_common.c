@@ -37,6 +37,22 @@ char *read_zstring( char *p, char *dest, int max )
 }
 
 
+char *write_int8( char *p, char a )
+{
+   *p = a;
+   
+   return p+1;
+}
+
+
+char *read_int8( char *p, char *a )
+{
+   *a = *p;
+   
+   return p+1;
+}
+
+
 char *write_int32( char *p, int n )
 {
    int *np = (int *)p;
@@ -81,15 +97,6 @@ char *new_packet( int message_id, int packet_size )
 char *skip_header( char *packet )
 {
    return packet + PACKET_HEADER_SIZE;
-}
-
-
-void send_packet( CONN *c, char *packet )
-{
-   /* Take the length as the first int32 of the packet. */
-   send_to_client( c, packet, ntohl( *(int *)packet ) );
-   
-   free( packet );
 }
 
 
