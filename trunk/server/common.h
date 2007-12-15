@@ -8,11 +8,14 @@
 
 typedef struct player_data PLAYER;
 typedef struct connection_data CONN;
+typedef struct map_data MAP;
 
 struct player_data
 {
    char *name;
    CONN *connection;
+   
+   short pos_y, pos_x;
    
    PLAYER *next;
 };
@@ -25,10 +28,19 @@ struct connection_data
    CONN *next;
 };
 
+struct map_data
+{
+   char *map;
+   
+   short height;
+   short width;
+};
+
 
 /* Prototypes */
 
 /* main.c */
+extern MAP map;
 void debugf( char *, ... );
 
 /* comm.c */
@@ -41,6 +53,8 @@ void parse_data( CONN *, char *, int );
 
 /* rwp_send */
 void kill_connection( CONN *, char * );
+void send_map( CONN *c, MAP *map );
+void send_userinfo( CONN *c, PLAYER *player );
 
 /* players.c */
 void pl_login( CONN *c, char *name );

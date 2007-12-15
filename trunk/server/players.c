@@ -20,6 +20,8 @@ PLAYER *create_player( char *name )
    
    pl = calloc( 1, sizeof( PLAYER ) );
    pl->name = strdup( name );
+   pl->pos_x = 2;
+   pl->pos_y = 2;
    
    pl->next = players;
    players = pl;
@@ -34,15 +36,17 @@ void player_file( char *name, char *dest )
    char *p;
    
    for ( p = dir; *p; p++ )
-     *(dest++) = *(p++);
+     *(dest++) = *p;
    
    for ( p = name; *p; p++ )
      {
 	if ( *p >= 'A' && *p <= 'Z' )
-	  *(dest++) = *(p++) - 'A' + 'a';
+	  *(dest++) = *p - 'A' + 'a';
 	else
-	  *(dest++) = *(p++);
+	  *(dest++) = *p;
      }
+   
+   *dest = 0;
 }
 
 
@@ -62,6 +66,8 @@ PLAYER *load_player( char *name )
    
    fscanf( fl, "Name: %s\n", buf );
    pl->name = strdup( buf );
+   fscanf( fl, "PosY: %hd\n", &pl->pos_y );
+   fscanf( fl, "PosX: %hd\n", &pl->pos_x );
    
    fclose( fl );
    
@@ -87,6 +93,8 @@ void save_player( PLAYER *pl )
      }
    
    fprintf( fl, "Name: %s\n", pl->name );
+   fprintf( fl, "PosY: %hd\n", pl->pos_y );
+   fprintf( fl, "PosX: %hd\n", pl->pos_x );
    
    fclose( fl );
 }
@@ -96,6 +104,8 @@ void save_player( PLAYER *pl )
 void destroy_player( PLAYER *pl )
 {
    PLAYER *prev;
+   
+   debugf( "%s logged out.", pl->name );
    
    free( pl->name );
    
@@ -148,11 +158,12 @@ void pl_login( CONN *c, char *name )
    if ( !pl )
      pl = create_player( name );
    
+   c->player = pl;
+   
    debugf( "%s logged in.", pl->name );
    
-   
-   
-   
+   send_map( c, &map );
+   send_userinfo( c, pl );
 }
 
 
@@ -162,6 +173,6 @@ void pl_disconnected( PLAYER *player, int by_error )
    if ( !player )
      return;
    
-   
+   unload_player( player );
 }
 

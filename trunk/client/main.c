@@ -8,6 +8,10 @@
 #include "common.h"
 
 
+MAP *map;
+PLAYER *player;
+
+
 void die( char *reason )
 {
    endwin( );
@@ -20,13 +24,24 @@ void die( char *reason )
 
 int enter_world( char *name )
 {
+   int c;
+   
    send_login( name );
    
    /* Enter the initial main-loop, in which we gather all entrance packets. */
-   while ( 1 /* !map || !player */ )
+   while ( !map || !player )
      {
 	if ( receive_one_packet( ) )
 	  return 1;
+     }
+   
+   mvaddstr( 11, 2, "Ready. [ENTER] to begin, or anything else to leave.." );
+   
+   c = getch( );
+   
+   if ( c != '\n' && c != '\r' && c != KEY_ENTER )
+     {
+	die( "Alright, goodbye." );
      }
    
    return 0;
@@ -52,13 +67,18 @@ int connect_user( char *name, char *hostname, int port )
 }
 
 
+
 int main( int argc, char *argv[] )
 {
    char name[32];
    char port[16];
    
    initscr( );
+   cbreak( );
+   nonl( );
+   keypad( stdscr, TRUE );
    
+   echo( );
    mvaddstr( 2, 2, "Character name: " );
    getnstr( name, 20 );
    
@@ -66,10 +86,13 @@ int main( int argc, char *argv[] )
    mvaddstr( 4, 2, "Port: " );
    getnstr( port, 5 );
    
+   noecho( );
+   
    if ( connect_user( name, "127.0.0.1", atoi(port) ) )
      return 1;
    
-   // interface
+   draw_interface( );
+   main_loop( );
    
    endwin( );
    
