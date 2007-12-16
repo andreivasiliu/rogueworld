@@ -11,6 +11,7 @@
 void (*current_handler)( int key );
 
 
+int cursor_tick;
 int cursor_y;
 int cursor_x;
 
@@ -20,15 +21,19 @@ void move_cursor( int y, int x )
    cursor_y += y;
    cursor_x += x;
    
-   if ( cursor_y < -3 )
-     cursor_y = -3;
-   if ( cursor_y > 3 )
-     cursor_y = 3;
+   if ( cursor_y < player->pos_y + -3 )
+     cursor_y = player->pos_y + -3;
+   if ( cursor_y > player->pos_y + 3 )
+     cursor_y = player->pos_y + 3;
    
-   if ( cursor_x < -3 )
-     cursor_x = -3;
-   if ( cursor_x > 3 )
-     cursor_x = 3;
+   if ( cursor_x < player->pos_x + -3 )
+     cursor_x = player->pos_x + -3;
+   if ( cursor_x > player->pos_x + 3 )
+     cursor_x = player->pos_x + 3;
+   
+   cursor_tick = 1;
+   
+   send_setcursor( cursor_y, cursor_x );
 }
 
 
@@ -58,6 +63,14 @@ void key_event( )
 }
 
 
+void tick_event( )
+{
+   cursor_tick = !cursor_tick;
+   
+   draw_interface( );
+}
+
+
 void draw_map( )
 {
    int y, x;
@@ -80,17 +93,19 @@ void draw_objects( )
 
 void draw_cursor( )
 {
-   if ( !cursor_x && !cursor_y )
+   if ( !cursor_tick )
+     return;
+   
+   if ( cursor_x == player->pos_x &&
+	cursor_y == player->pos_y )
      return;
    
    /* Out of screen bounds. */
-   if ( player->pos_x + cursor_x < 0 ||
-	player->pos_y + cursor_y < 0 )
+   if ( cursor_x < 0 ||
+	cursor_y < 0 )
      return;
    
-   mvaddch( player->pos_y + cursor_y,
-	    player->pos_x + cursor_x,
-	    '+' );
+   mvaddch( cursor_y, cursor_x, '+' );
 }
 
 
@@ -115,4 +130,5 @@ void draw_interface( )
    
    refresh( );
 }
+
 

@@ -21,6 +21,8 @@ void update_userinfo( char *name, int pos_y, int pos_x )
    player->name = strdup( name );
    player->pos_y = pos_y;
    player->pos_x = pos_x;
+   cursor_y = pos_y;
+   cursor_x = pos_x;
    
    mvaddstr( 8, 2, "Received userinfo." );
    refresh( );

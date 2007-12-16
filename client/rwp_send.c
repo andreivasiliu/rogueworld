@@ -46,3 +46,19 @@ void send_enterworld( )
    send_packet( packet );
 }
 
+
+void send_setcursor( int y, int x )
+{
+   char *packet, *p;
+   
+   packet = new_packet( MSG_SETCURSOR, 2*sizeof(char) );
+   if ( !packet )
+     return;
+   
+   p = skip_header( packet );
+   p = write_int8( p, y );
+   p = write_int8( p, x );
+   
+   send_packet( packet );
+}
+

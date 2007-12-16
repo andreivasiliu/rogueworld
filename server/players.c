@@ -23,8 +23,10 @@ PLAYER *create_player( char *name )
    pl->pos_x = 2;
    pl->pos_y = 2;
    
-   pl->next = players;
-   players = pl;
+   pl->cursor_y = pl->pos_y;
+   pl->cursor_x = pl->pos_x;
+   
+   debugf( "New player: %s.", pl->name );
    
    return pl;
 }
@@ -71,8 +73,10 @@ PLAYER *load_player( char *name )
    
    fclose( fl );
    
-   pl->next = players;
-   players = pl->next;
+   pl->cursor_y = pl->pos_y;
+   pl->cursor_x = pl->pos_x;
+   
+   debugf( "%s logged in.", pl->name );
    
    return pl;
 }
@@ -159,8 +163,7 @@ void pl_login( CONN *c, char *name )
      pl = create_player( name );
    
    c->player = pl;
-   
-   debugf( "%s logged in.", pl->name );
+   pl->connection = c;
    
    send_map( c, &map );
    send_userinfo( c, pl );
@@ -174,5 +177,40 @@ void pl_disconnected( PLAYER *player, int by_error )
      return;
    
    unload_player( player );
+}
+
+
+void pl_move( PLAYER *pl, int y, int x )
+{
+   int pos_y, pos_x;
+   
+   pos_y = pl->pos_y + y;
+   pos_x = pl->pos_x + x;
+   
+   if ( map.map[pos_y*map.width+pos_x] == '#' )
+     return;
+   
+   pl->pos_y = pos_y;
+   pl->pos_x = pos_x;
+   
+   send_movement( pl );
+}
+
+
+void pl_enterworld( PLAYER *player )
+{
+   PLAYER *p;
+   
+   for ( p = players; p; p = p->next )
+     if ( p == player )
+       {
+	  debugf( "%s thought he wasn't already in the world.", p->name );
+	  return;
+       }
+   
+   player->next = players;
+   players = player;
+   
+   debugf( "%s has entered the world.", player->name );
 }
 

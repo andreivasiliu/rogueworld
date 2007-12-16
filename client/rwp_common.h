@@ -5,6 +5,8 @@
 #define MSG_ENTERWORLD	2
 #define MSG_USERINFO	3
 #define MSG_MAP		4
+#define MSG_SETCURSOR	5
+#define MSG_MOVEMENT	6
 
 
 /* Packet-building functions. */

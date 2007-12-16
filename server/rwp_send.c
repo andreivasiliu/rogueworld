@@ -63,3 +63,18 @@ void send_userinfo( CONN *c, PLAYER *player )
 }
 
 
+void send_movement( PLAYER *pl )
+{
+   char *packet, *p;
+   
+   packet = new_packet( MSG_MOVEMENT, 2*sizeof(char) );
+   if ( !packet )
+     return;
+   
+   p = skip_header( packet );
+   p = write_int8( p, pl->pos_y );
+   p = write_int8( p, pl->pos_x );
+   
+   send_packet( pl->connection, packet );
+}
+

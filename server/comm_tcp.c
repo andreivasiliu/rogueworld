@@ -10,6 +10,7 @@
 #else
 # include <winsock2.h>
 #endif
+#include <sys/time.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -191,7 +192,8 @@ void send_to_client( CONN *c, char *data, int bytes )
 
 int main_loop( int port )
 {
-   //struct timeval pulsetime;
+   struct timeval pulsetime;
+   struct timeval lasttick, now;
    fd_set in_set;
    fd_set out_set;
    fd_set exc_set;
@@ -201,6 +203,8 @@ int main_loop( int port )
    server = init_server( port );
    if ( server < 0 )
      return 1;
+   
+   gettimeofday( &lasttick, NULL );
    
    while ( 1 )
      {
@@ -220,7 +224,25 @@ int main_loop( int port )
 	       max_fd = c->sock;
 	  }
 	
-	select( max_fd + 1, &in_set, &out_set, &exc_set, NULL );
+	pulsetime.tv_sec = 0;
+	pulsetime.tv_usec = 50000;
+	
+	select( max_fd + 1, &in_set, &out_set, &exc_set, &pulsetime );
+	
+	gettimeofday( &now, NULL );
+	now.tv_usec -= 250000;
+	if ( now.tv_usec < 0 )
+	  {
+	     now.tv_usec += 1000000;
+	     now.tv_sec -= 1;
+	  }
+	
+	if ( timercmp( &lasttick, &now, < ) )
+	  {
+	     tick_event( );
+	     gettimeofday( &lasttick, NULL );
+	     continue;
+	  }
 	
 	/* New connection. */
 	if ( FD_ISSET( server, &in_set ) )

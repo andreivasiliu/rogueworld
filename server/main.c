@@ -49,14 +49,6 @@ int init_world( )
 }
 
 
-int tick( )
-{
-   
-   return 0;
-}
-
-
-
 int main( )
 {
    int port = 1623;
