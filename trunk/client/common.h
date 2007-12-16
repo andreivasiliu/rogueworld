@@ -38,13 +38,18 @@ void parse_data( char *data, int size );
 
 /* rwp_send.c */
 void send_login( char *name );
+void send_enterworld( );
+void send_setcursor( int y, int x );
 
 /* update.c */
 void update_userinfo( char *name, int pos_y, int pos_x );
 void update_map( int height, int width, char *map );
 
 /* events.c */
+extern int cursor_y;
+extern int cursor_x;
 void key_event( );
+void tick_event( );
 void draw_interface( );
 
 

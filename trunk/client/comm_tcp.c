@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 
@@ -89,8 +90,12 @@ void send_to_server( char *msg, int bytes )
 
 int main_loop( )
 {
+   struct timeval pulsetime;
+   struct timeval lasttick, now;
    fd_set in_set;
    int max_fd;
+   
+   gettimeofday( &lasttick, NULL );
    
    while( 1 )
      {
@@ -104,7 +109,25 @@ int main_loop( )
 	/* I think it's safe to say that, whatever the value, it's > 0. */
 	max_fd = server_socket;
 	
-	select( max_fd + 1, &in_set, NULL, NULL, NULL );
+	pulsetime.tv_sec = 0;
+	pulsetime.tv_usec = 250000;
+	
+	select( max_fd + 1, &in_set, NULL, NULL, &pulsetime );
+	
+	gettimeofday( &now, NULL );
+	now.tv_usec -= 250000;
+	if ( now.tv_usec < 0 )
+	  {
+	     now.tv_usec += 1000000;
+	     now.tv_sec -= 1;
+	  }
+	
+	if ( timercmp( &lasttick, &now, < ) )
+	  {
+	     tick_event( );
+	     gettimeofday( &lasttick, NULL );
+	     continue;
+	  }
 	
 	if ( FD_ISSET( server_socket, &in_set ) )
 	  receive_one_packet( );

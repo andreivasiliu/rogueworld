@@ -1,7 +1,7 @@
 # Generic Makefile for RW.
 
 BIN = rworld
-OBJ = main.o comm_tcp.o rwp_common.o rwp_parse.o rwp_send.o players.o
+OBJ = main.o comm_tcp.o rwp_common.o rwp_parse.o rwp_send.o players.o events.o
 
 
 all: $(BIN)

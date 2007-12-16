@@ -16,6 +16,7 @@ struct player_data
    CONN *connection;
    
    short pos_y, pos_x;
+   short cursor_y, cursor_x;
    
    PLAYER *next;
 };
@@ -55,8 +56,15 @@ void parse_data( CONN *, char *, int );
 void kill_connection( CONN *, char * );
 void send_map( CONN *c, MAP *map );
 void send_userinfo( CONN *c, PLAYER *player );
+void send_movement( PLAYER *pl );
 
 /* players.c */
+extern PLAYER *players;
 void pl_login( CONN *c, char *name );
 void pl_disconnected( PLAYER *, int by_error );
+void pl_move( PLAYER *, int y, int x );
+void pl_enterworld( PLAYER * );
+
+/* events.c */
+void tick_event( );
 

@@ -26,7 +26,7 @@ void parse_packet( char *packet, int size )
 	
 	update_userinfo( buf, pos_y, pos_x );
      }
-   if ( mid == MSG_MAP )
+   else if ( mid == MSG_MAP )
      {
 	char height, width;
 	
@@ -34,6 +34,16 @@ void parse_packet( char *packet, int size )
 	p = read_int8( p, &width );
 	
 	update_map( height, width, p );
+     }
+   else if ( mid == MSG_MOVEMENT )
+     {
+	char pos_y, pos_x;
+	
+	p = read_int8( p, &pos_y );
+	p = read_int8( p, &pos_x );
+	
+	player->pos_y = pos_y;
+	player->pos_x = pos_x;
      }
 }
 

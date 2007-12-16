@@ -44,6 +44,8 @@ int enter_world( char *name )
 	die( "Alright, goodbye." );
      }
    
+   send_enterworld( );
+   
    return 0;
 }
 
