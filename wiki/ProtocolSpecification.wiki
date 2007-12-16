@@ -1,5 +1,5 @@
 #summary Communication protocol used between RogueWorld clients and the server.
-#labels Featured
+#labels Featured,Phase-Design
 
 = Design Goals =
 
@@ -73,4 +73,18 @@ Map Packet (_server_) (mid = MSG_MAP):
 Enter World Packet (_client_) (mid = MSG_ENTERWORLD)
 {{{
  <empty>
+}}}
+
+Set Cursor Packet (_client_) (mid = MSG_SETCURSOR)
+{{{
+ <int8><int8>
+  ^     ^-- x position on map
+  \-- y position on map
+}}}
+
+Movement Packet (_server_) (mid = MSG_MOVEMENT)
+{{{
+ <int8><int8>
+  ^     ^-- x position on map
+  \-- y position on map
 }}}
