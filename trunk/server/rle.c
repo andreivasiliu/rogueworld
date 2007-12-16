@@ -5,7 +5,7 @@
  * and returns 1 if it did not fit. */
 int rle_encode( unsigned char *src, unsigned char *dest, int max )
 {
-   unsigned char c;
+   unsigned char c, *s1, *s2, *d;
    unsigned int length, pos, i;
    if ( ( src == NULL ) || ( dest == NULL ) )
      {
@@ -18,42 +18,36 @@ int rle_encode( unsigned char *src, unsigned char *dest, int max )
         return -1;
      }
 
-   c = src[0];
-   length = 1;
-   i = 0;
-   pos = 0;
 
-   while ( c != '\0' )
+   s1 = s2 = src;
+   d = dest;
+   length = 0;
+   while  ( *s2 != '\0' )
      {
-        i++;
-        if ( c == src[i] )
+        while ( *s2 == *s1 )
           {
-             length++;
-             if ( length == 255 )
+             s2++;
+             if ( s2 - s1 == 255 )
                {
-                  dest[pos] = length;
-                  pos++;
-                  dest[pos] = c;
-                  pos++;
-                  c = src[i];
-                  length = 1;
+                  *d = s2-s1;
+                  d++;
+                  *d = *s1;
+                  d++;
+                  s1 = s2;
                }
           }
-        else
-          {
-             dest[pos] = length;
-             pos++;
-             dest[pos] = c;
-                          pos++;
-             c = src[i];
-             length = 1;
-          }
-        if (  pos >= max )
+        *d = s2 - s1;
+        d++;
+        *d = *s1;
+        d++;
+        s1 = s2;
+        if ( d - dest >= max )
           break;
      }
-   dest[pos++] = '\0';
-   return 0;
+   *d = 0;
+  return 0;
 }
+
 
 
 void rle_decode( unsigned char *src, unsigned char *dest )
