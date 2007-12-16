@@ -3,13 +3,13 @@
 
 = Design Goals =
 
-Even though initially tested over TCP, the intent is to provide a fast, safe protocol for use with UDP. Packets must be small and error-safe, and subsequent information about an object or aspect of the game should make all such previous packets obsolete. The goal is to support a packet loss rate of at least 5-10%.
+Even though initially tested over TCP, the intent is to provide a fast, safe protocol for use with UDP. Packets must be small and error-safe, and subsequent information about an object or aspect of the game should make all such previous packets obsolete. The goal is to support a packet loss rate of at least 5-10%. The project also aims towards high portability, so big-endian ordering is used everywhere in communication.
 
-*Status*: _Partially Planned_.
+*Status*: _Partially Planned and Partially Implemented_.
 
 = High-Level Specification =
 
-In case of any errors (e.g. invalid user/password), the communication will end with a Close pachet.
+In case of any error (e.g. invalid user/password), the communication will end with a Close packet.
 
 Login Protocol:
   * Client:
@@ -20,14 +20,21 @@ Login Protocol:
   * Client:
     * send 'enterworld'
 
+Movement Protocol:
+  * Client:
+    * send 'setcursor x, y'
+  * Server:
+    * send 'movement x, y'
+    * send 'object nr, type, whathappened'
+
 = Low-Level Specification =
 
-Pachet Data Types:
+Packet Data Types:
   * *int8*: 1 byte
   * *int32*: 4 bytes in network-order (big-endian).
   * *zstring*: null-terminated string.
 
-Global Pachet Header:
+Global Packet Header:
 {{{
  <int32><int32><int32>
   ^      ^      ^-- message ID (mid)
@@ -35,19 +42,19 @@ Global Pachet Header:
   \-- message length
 }}}
 
-Login Pachet (_client_) (mid = MSG_LOGIN):
+Login Packet (_client_) (mid = MSG_LOGIN):
 {{{
  <zstring>
   ^-- name
 }}}
 
-Close Pachet (_both_) (mid = MSG_CLOSE):
+Close Packet (_both_) (mid = MSG_CLOSE):
 {{{
  <zstring>
   ^-- reason
 }}}
 
-UserInfo Pachet (_server_) (mid = MSG_USERINFO):
+User Info Packet (_server_) (mid = MSG_USERINFO):
 {{{
  <zstring><int8><int8>
   ^        ^     ^-- position x on map
@@ -55,7 +62,7 @@ UserInfo Pachet (_server_) (mid = MSG_USERINFO):
   \-- properly capitalized player-name
 }}}
 
-Map Pachet (_server_) (mid = MSG_MAP):
+Map Packet (_server_) (mid = MSG_MAP):
 {{{
  <int8><int8><zstring>
   ^     ^     ^-- RLE-encoded map representation
@@ -63,7 +70,7 @@ Map Pachet (_server_) (mid = MSG_MAP):
   \-- map height
 }}}
 
-EnterWorld (_client_) (mid = MSG_ENTERWORLD)
+Enter World Packet (_client_) (mid = MSG_ENTERWORLD)
 {{{
  <empty>
 }}}
