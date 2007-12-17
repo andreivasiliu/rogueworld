@@ -110,12 +110,12 @@ int main_loop( )
 	max_fd = server_socket;
 	
 	pulsetime.tv_sec = 0;
-	pulsetime.tv_usec = 250000;
+	pulsetime.tv_usec = 25000;
 	
 	select( max_fd + 1, &in_set, NULL, NULL, &pulsetime );
 	
 	gettimeofday( &now, NULL );
-	now.tv_usec -= 250000;
+	now.tv_usec -= 200000;
 	if ( now.tv_usec < 0 )
 	  {
 	     now.tv_usec += 1000000;

@@ -59,8 +59,12 @@ void parse_data( CONN *c, char *data, int size )
    if ( packet_size == size )
      {
 	parse_packet( c, data, packet_size );
-	data += packet_size;
-	size -= packet_size;
+     }
+   else if ( packet_size < size )
+     {
+	parse_packet( c, data, packet_size );
+	
+	parse_data( c, data + packet_size, size - packet_size );
      }
    else
      {

@@ -12,6 +12,7 @@ void (*current_handler)( int key );
 
 
 int cursor_tick;
+int cursor_changed;
 int cursor_y;
 int cursor_x;
 
@@ -33,7 +34,10 @@ void move_cursor( int y, int x )
    
    cursor_tick = 1;
    
-   send_setcursor( cursor_y, cursor_x );
+   /* Don't send it too many times. Just once a tick. */
+   if ( !cursor_changed )
+     send_setcursor( cursor_y, cursor_x );
+   cursor_changed = 1;
 }
 
 
@@ -66,6 +70,11 @@ void key_event( )
 void tick_event( )
 {
    cursor_tick = !cursor_tick;
+   if ( cursor_changed )
+     {
+	cursor_changed = 0;
+	send_setcursor( cursor_y, cursor_x );
+     }
    
    draw_interface( );
 }
@@ -87,7 +96,7 @@ void draw_map( )
 void draw_objects( )
 {
    move( player->pos_y, player->pos_x );
-   addch( '@' );
+   addch( '@' | A_BOLD );
 }
 
 
@@ -105,7 +114,7 @@ void draw_cursor( )
 	cursor_y < 0 )
      return;
    
-   mvaddch( cursor_y, cursor_x, '+' );
+   mvaddch( cursor_y, cursor_x, '+' | A_BOLD );
 }
 
 
