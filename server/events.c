@@ -23,7 +23,8 @@ void move_players( )
 	else if ( pl->cursor_y > pl->pos_y ) y = 1;
 	else y = 0;
 	
-	pl_move( pl, y, x );
+	move_object( pl->persona, y, x );
+//	pl_move( pl, y, x );
      }
 }
 

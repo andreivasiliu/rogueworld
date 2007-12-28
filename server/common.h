@@ -1,7 +1,11 @@
 
 /* Macros */
 
+/* Directories */
 #define DATA "../data"
+
+/* Object Types */
+#define OBJ_PLAYER	1
 
 
 /* Data structures */
@@ -9,14 +13,15 @@
 typedef struct player_data PLAYER;
 typedef struct connection_data CONN;
 typedef struct map_data MAP;
+typedef struct object_data OBJECT;
 
 struct player_data
 {
    char *name;
    CONN *connection;
+   OBJECT *persona;
    
-   short pos_y, pos_x;
-   short cursor_y, cursor_x;
+   short cursor_y, cursor_y;
    
    PLAYER *next;
 };
@@ -37,6 +42,16 @@ struct map_data
    short width;
 };
 
+struct object_data
+{
+   int vnum;
+   int type;
+   
+   PLAYER *player;
+   
+   short pos_y, pos_x;
+};
+   
 
 /* Prototypes */
 
