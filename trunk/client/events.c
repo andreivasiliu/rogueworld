@@ -129,7 +129,7 @@ void draw_stats( )
 
 void draw_interface( )
 {
-   clear( );
+   erase( );
    
    draw_map( );
    draw_objects( );
