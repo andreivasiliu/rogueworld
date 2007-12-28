@@ -84,7 +84,15 @@ Set Cursor Packet (_client_) (mid = MSG_SETCURSOR)
 
 Movement Packet (_server_) (mid = MSG_MOVEMENT)
 {{{
- <int8><int8>
-  ^     ^-- x position on map
-  \-- y position on map
+ <int32><int32><int8><int8>
+  ^      |      ^     ^-- x position on map
+  |      |      \-- y position on map
+  |      \-- object type
+  \-- object vnum
+}}}
+
+Disappear Packet (_server_) (mid = MSG_DISAPPEAR)
+{{{
+ <int32>
+  ^-- object vnum
 }}}
