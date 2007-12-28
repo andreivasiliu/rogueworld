@@ -20,11 +20,11 @@ PLAYER *create_player( char *name )
    
    pl = calloc( 1, sizeof( PLAYER ) );
    pl->name = strdup( name );
-   pl->pos_x = 2;
-   pl->pos_y = 2;
+   pl->body_pos_x = 2;
+   pl->body_pos_y = 2;
    
-   pl->cursor_y = pl->pos_y;
-   pl->cursor_x = pl->pos_x;
+   pl->cursor_y = pl->body_pos_y;
+   pl->cursor_x = pl->body_pos_x;
    
    debugf( "New player: %s.", pl->name );
    
@@ -68,13 +68,13 @@ PLAYER *load_player( char *name )
    
    fscanf( fl, "Name: %s\n", buf );
    pl->name = strdup( buf );
-   fscanf( fl, "PosY: %hd\n", &pl->pos_y );
-   fscanf( fl, "PosX: %hd\n", &pl->pos_x );
+   fscanf( fl, "PosY: %hd\n", &pl->body_pos_y );
+   fscanf( fl, "PosX: %hd\n", &pl->body_pos_x );
    
    fclose( fl );
    
-   pl->cursor_y = pl->pos_y;
-   pl->cursor_x = pl->pos_x;
+   pl->cursor_y = pl->body_pos_y;
+   pl->cursor_x = pl->body_pos_x;
    
    debugf( "%s logged in.", pl->name );
    
@@ -97,8 +97,16 @@ void save_player( PLAYER *pl )
      }
    
    fprintf( fl, "Name: %s\n", pl->name );
-   fprintf( fl, "PosY: %hd\n", pl->pos_y );
-   fprintf( fl, "PosX: %hd\n", pl->pos_x );
+   if ( pl->persona )
+     {
+	fprintf( fl, "PosY: %hd\n", pl->persona->pos_y );
+	fprintf( fl, "PosX: %hd\n", pl->persona->pos_x );
+     }
+   else
+     {
+	fprintf( fl, "PosY: %hd\n", pl->body_pos_y );
+	fprintf( fl, "PosX: %hd\n", pl->body_pos_x );
+     }
    
    fclose( fl );
 }
@@ -110,8 +118,6 @@ void destroy_player( PLAYER *pl )
    PLAYER *prev;
    
    debugf( "%s logged out.", pl->name );
-   
-   free( pl->name );
    
    if ( pl == players )
      players = players->next;
@@ -125,6 +131,9 @@ void destroy_player( PLAYER *pl )
 	    }
      }
    
+   if ( pl->persona )
+     destroy_object( pl->persona );
+   free( pl->name );
    free( pl );
 }
 
@@ -180,23 +189,6 @@ void pl_disconnected( PLAYER *player, int by_error )
 }
 
 
-void pl_move( PLAYER *pl, int y, int x )
-{
-   int pos_y, pos_x;
-   
-   pos_y = pl->pos_y + y;
-   pos_x = pl->pos_x + x;
-   
-   if ( map.map[pos_y*map.width+pos_x] == '#' )
-     return;
-   
-   pl->pos_y = pos_y;
-   pl->pos_x = pos_x;
-   
-   send_movement( pl );
-}
-
-
 void pl_enterworld( PLAYER *player )
 {
    PLAYER *p;
@@ -210,6 +202,10 @@ void pl_enterworld( PLAYER *player )
    
    player->next = players;
    players = player;
+   
+   player->persona = create_object( OBJ_PLAYER );
+   player->persona->player = player; /* Don't ask. */
+   place_object( player->persona, player->body_pos_y, player->body_pos_x );
    
    debugf( "%s has entered the world.", player->name );
 }

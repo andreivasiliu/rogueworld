@@ -1,15 +1,22 @@
 
+/* Macros */
+
+/* Object Types */
+#define OBJ_YOU		1
+#define OBJ_PLAYER	2
+
 
 /* Data structures */
 
 typedef struct player_data PLAYER;
 typedef struct map_data MAP;
+typedef struct object_data OBJECT;
 
 struct player_data
 {
    char *name;
    
-   int pos_y, pos_x;
+   OBJECT *body;
 };
 
 struct map_data
@@ -17,6 +24,16 @@ struct map_data
    char *map;
    
    int height, width;
+};
+
+struct object_data
+{
+   int type;
+   int vnum;
+   
+   short pos_y, pos_x;
+   
+   OBJECT **prev, *next;
 };
 
 
@@ -52,4 +69,8 @@ void key_event( );
 void tick_event( );
 void draw_interface( );
 
+/* objects.c */
+extern OBJECT *objects;
+void object_movement( int obj_nr, int obj_type, short pos_y, short pos_x );
+void object_disappeared( int obj_nr );
 

@@ -5,7 +5,8 @@
 #define DATA "../data"
 
 /* Object Types */
-#define OBJ_PLAYER	1
+#define OBJ_YOU		1
+#define OBJ_PLAYER	2
 
 
 /* Data structures */
@@ -21,7 +22,8 @@ struct player_data
    CONN *connection;
    OBJECT *persona;
    
-   short cursor_y, cursor_y;
+   short cursor_y, cursor_x;
+   short body_pos_y, body_pos_x;
    
    PLAYER *next;
 };
@@ -50,6 +52,8 @@ struct object_data
    PLAYER *player;
    
    short pos_y, pos_x;
+   
+   OBJECT *next;
 };
    
 
@@ -71,15 +75,22 @@ void parse_data( CONN *, char *, int );
 void kill_connection( CONN *, char * );
 void send_map( CONN *c, MAP *map );
 void send_userinfo( CONN *c, PLAYER *player );
-void send_movement( PLAYER *pl );
+void send_movement( PLAYER *pl, OBJECT *obj, short pos_y, short pos_x );
+void send_disappear( PLAYER *pl, OBJECT *obj );
 
 /* players.c */
 extern PLAYER *players;
 void pl_login( CONN *c, char *name );
 void pl_disconnected( PLAYER *, int by_error );
-void pl_move( PLAYER *, int y, int x );
 void pl_enterworld( PLAYER * );
 
 /* events.c */
 void tick_event( );
+
+/* objects.c */
+OBJECT *create_object( int type );
+void destroy_object( OBJECT *obj );
+void move_object( OBJECT *obj, short y, short x );
+void place_object( OBJECT *obj, short pos_y, short pos_x );
+void displace_object( OBJECT *obj );
 

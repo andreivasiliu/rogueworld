@@ -19,18 +19,25 @@ int cursor_x;
 
 void move_cursor( int y, int x )
 {
+   OBJECT *body;
+   
+   body = player->body;
+   
+   if ( !body )
+     return;
+   
    cursor_y += y;
    cursor_x += x;
    
-   if ( cursor_y < player->pos_y + -3 )
-     cursor_y = player->pos_y + -3;
-   if ( cursor_y > player->pos_y + 3 )
-     cursor_y = player->pos_y + 3;
+   if ( cursor_y < body->pos_y + -3 )
+     cursor_y = body->pos_y + -3;
+   if ( cursor_y > body->pos_y + 3 )
+     cursor_y = body->pos_y + 3;
    
-   if ( cursor_x < player->pos_x + -3 )
-     cursor_x = player->pos_x + -3;
-   if ( cursor_x > player->pos_x + 3 )
-     cursor_x = player->pos_x + 3;
+   if ( cursor_x < body->pos_x + -3 )
+     cursor_x = body->pos_x + -3;
+   if ( cursor_x > body->pos_x + 3 )
+     cursor_x = body->pos_x + 3;
    
    cursor_tick = 1;
    
@@ -95,18 +102,27 @@ void draw_map( )
 
 void draw_objects( )
 {
-   move( player->pos_y, player->pos_x );
-   addch( '@' | A_BOLD );
+   OBJECT *obj;
+   
+   for ( obj = objects; obj; obj = obj->next )
+     {
+	move( obj->pos_y, obj->pos_x );
+	
+	if ( obj->type == OBJ_YOU )
+	  addch( '@' | A_BOLD );
+	else
+	  addch( '@' );
+     }
 }
 
 
 void draw_cursor( )
 {
-   if ( !cursor_tick )
+   if ( !cursor_tick || !player->body )
      return;
    
-   if ( cursor_x == player->pos_x &&
-	cursor_y == player->pos_y )
+   if ( cursor_x == player->body->pos_x &&
+	cursor_y == player->body->pos_y )
      return;
    
    /* Out of screen bounds. */
@@ -123,7 +139,10 @@ void draw_stats( )
    move( LINES-3, 1 );
    printw( "Player: %s", player->name );
    move( LINES-2, 1 );
-   printw( "Pos: y%d/x%d", player->pos_y, player->pos_x );
+   if ( player->body )
+     printw( "Pos: y%d/x%d", player->body->pos_y, player->body->pos_x );
+   else
+     printw( "I don't know where my body is!" );
 }
 
 
