@@ -37,13 +37,23 @@ void parse_packet( char *packet, int size )
      }
    else if ( mid == MSG_MOVEMENT )
      {
+	int obj_nr, obj_type;
 	char pos_y, pos_x;
 	
+	p = read_int32( p, &obj_nr );
+	p = read_int32( p, &obj_type );
 	p = read_int8( p, &pos_y );
 	p = read_int8( p, &pos_x );
 	
-	player->pos_y = pos_y;
-	player->pos_x = pos_x;
+	object_movement( obj_nr, obj_type, pos_y, pos_x );
+     }
+   else if ( mid == MSG_DISAPPEAR )
+     {
+	int obj_nr;
+	
+	p = read_int32( p, &obj_nr );
+	
+	object_disappeared( obj_nr );
      }
 }
 

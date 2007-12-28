@@ -56,24 +56,44 @@ void send_userinfo( CONN *c, PLAYER *player )
    
    p = skip_header( packet );
    p = write_zstring( p, player->name );
-   p = write_int8( p, player->pos_y );
-   p = write_int8( p, player->pos_x );
    
    send_packet( c, packet );
 }
 
 
-void send_movement( PLAYER *pl )
+void send_movement( PLAYER *pl, OBJECT *obj, short pos_y, short pos_x )
+{
+   char *packet, *p;
+   int type;
+   
+   packet = new_packet( MSG_MOVEMENT, 2*sizeof(char) + 2*sizeof(int) );
+   if ( !packet )
+     return;
+   
+   if ( pl->persona == obj )
+     type = OBJ_YOU;
+   else
+     type = obj->type;
+   
+   p = skip_header( packet );
+   p = write_int32( p, obj->vnum );
+   p = write_int32( p, type );
+   p = write_int8( p, pos_y );
+   p = write_int8( p, pos_x );
+   
+   send_packet( pl->connection, packet );
+}
+
+void send_disappear( PLAYER *pl, OBJECT *obj )
 {
    char *packet, *p;
    
-   packet = new_packet( MSG_MOVEMENT, 2*sizeof(char) );
+   packet = new_packet( MSG_DISAPPEAR, sizeof(int) );
    if ( !packet )
      return;
    
    p = skip_header( packet );
-   p = write_int8( p, pl->pos_y );
-   p = write_int8( p, pl->pos_x );
+   p = write_int32( p, obj->vnum );
    
    send_packet( pl->connection, packet );
 }
