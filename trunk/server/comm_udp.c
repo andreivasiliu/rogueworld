@@ -86,9 +86,10 @@ int init_server( int port )
    return fd;
 }
 
-int new_connection ( int control )
+int new_connection ( int control, int port )
 {
-   struct sockaddr_in addr;
+   struct sockaddr_in addr, sa;
+   static struct sockaddr_in sa_zero;
    unsigned int size;
    char buf[4096];
    int desc, new_sock, bytes;
@@ -96,6 +97,8 @@ int new_connection ( int control )
    
    size = sizeof( addr );
    
+   
+
    /*Receive a package from a new player*/
    if ( ( desc = recvfrom ( control, buf, 4096, 0, ( struct sockaddr * ) &addr, &size ) ) < 0 )
      {
@@ -109,7 +112,30 @@ int new_connection ( int control )
 	debugf( "new_connection: new_socket: %s.", strerror( errno ) );
 	return -1;
      }
+
+   
+   
+   if ( setsockopt( new_sock, SOL_SOCKET, SO_REUSEADDR,
+		    (char *) &x, sizeof( x ) ) < 0 )
+     {
+	debugf( "new_connection: SO_REUSEADDR: %s.", strerror( errno ) );
+	CLOSE( new_sock );
+	return -1;
+     }
+   
+   sa            = sa_zero;
+   sa.sin_family = AF_INET;
+   sa.sin_port   = htons( port );
+
    /*Binding...*/
+   if ( bind( new_sock, (struct sockaddr *) &sa, sizeof( sa ) ) < 0 )
+     {
+	debugf( "new_connection: bind: %s.", strerror( errno ) );
+	CLOSE( new_sock );
+	return -1;
+     }
+
+   
    if ( connect ( new_sock, ( struct sockaddr* )&addr, size ) < 0 )
      {
 	debugf ( "new_connection: connect: %s.", strerror ( errno ) );
@@ -163,7 +189,7 @@ int read_data ( CONN *conn )
    
    size = sizeof ( from );
       
-   bytes = recvfrom ( conn->sock, buf, 4096, 0, ( struct sockaddr* ) &from, &size );
+   bytes = recv ( conn->sock, buf, 4096, 0 );
    
    /*Connection error.*/
    if ( bytes < 0 )
@@ -253,7 +279,7 @@ int main_loop( int port )
 	/* New connection. */
 	if ( FD_ISSET( server, &in_set ) )
 	  {
-	     if ( new_connection( server ) )
+	     if ( new_connection( server, port ) )
 	       return 1;
 	  }
 	
