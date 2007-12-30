@@ -29,44 +29,48 @@ CONN *connections;
 #endif
 
 
-int init_server_udp( int port )
+#if defined(WIN32)
+int init_wsa( )
+{
+   /* Initialize WSA. */
+   WORD wVersionRequested;
+   WSADATA wsaData;
+   wVersionRequested = MAKEWORD( 1, 0 );
+   
+   if ( WSAStartup( wVersionRequested, &wsaData ) )
+     {
+	return -1;
+     }
+   
+   if ( LOBYTE( wsaData.wVersion ) != 1 ||
+	HIBYTE( wsaData.wVersion ) != 0 )
+     {
+	WSACleanup( );
+	return -1;
+     }
+   /* End of WSA. */
+   
+   return 0;
+}
+#endif
+
+
+int init_udp_server( int port )
 {
    static struct sockaddr_in sa_zero;
    struct sockaddr_in sa;
    int fd, x = 1;
    
-#if defined(WIN32)
-     {
-        /* Initialize WSA. */
-        WORD wVersionRequested;
-        WSADATA wsaData;
-        wVersionRequested = MAKEWORD( 1, 0 );
-        
-        if ( WSAStartup( wVersionRequested, &wsaData ) )
-          {
-             return 0;
-          }
-        
-        if ( LOBYTE( wsaData.wVersion ) != 1 ||
-             HIBYTE( wsaData.wVersion ) != 0 )
-          {
-             WSACleanup( );
-             return 0;
-          }
-        /* End of WSA. */
-     }
-#endif
-   
    if ( ( fd = socket( PF_INET, SOCK_DGRAM, 0 ) ) < 0 )
      {
-	debugf( "init_server_udp: socket: %s.", strerror( errno ) );
+	debugf( "init_udp_server: socket: %s.", strerror( errno ) );
 	return -1;
      }
 
    if ( setsockopt( fd, SOL_SOCKET, SO_REUSEADDR,
 		    (char *) &x, sizeof( x ) ) < 0 )
      {
-	debugf( "init_server_udp: SO_REUSEADDR: %s.", strerror( errno ) );
+	debugf( "init_udp_server: SO_REUSEADDR: %s.", strerror( errno ) );
 	CLOSE( fd );
 	return -1;
      }
@@ -77,54 +81,31 @@ int init_server_udp( int port )
 
    if ( bind( fd, (struct sockaddr *) &sa, sizeof( sa ) ) < 0 )
      {
-	debugf( "init_server_udp: bind: %s.", strerror( errno ) );
+	debugf( "init_udp_server: bind: %s.", strerror( errno ) );
 	CLOSE( fd );
 	return -1;
      }
-
    
    return fd;
 }
 
 
-int init_server_tcp( int port )
+int init_tcp_server( int port )
 {
    static struct sockaddr_in sa_zero;
    struct sockaddr_in sa;
    int fd, x = 1;
    
-#if defined(WIN32)
-     {
-        /* Initialize WSA. */
-        WORD wVersionRequested;
-        WSADATA wsaData;
-        wVersionRequested = MAKEWORD( 1, 0 );
-        
-        if ( WSAStartup( wVersionRequested, &wsaData ) )
-          {
-             return 0;
-          }
-        
-        if ( LOBYTE( wsaData.wVersion ) != 1 ||
-             HIBYTE( wsaData.wVersion ) != 0 )
-          {
-             WSACleanup( );
-             return 0;
-          }
-        /* End of WSA. */
-     }
-#endif
-   
    if ( ( fd = socket( PF_INET, SOCK_STREAM, 0 ) ) < 0 )
      {
-	debugf( "init_server_tcp: socket: %s.", strerror( errno ) );
+	debugf( "init_tcp_server: socket: %s.", strerror( errno ) );
 	return -1;
      }
 
    if ( setsockopt( fd, SOL_SOCKET, SO_REUSEADDR,
 		    (char *) &x, sizeof( x ) ) < 0 )
      {
-	debugf( "init_server_tcp: SO_REUSEADDR: %s.", strerror( errno ) );
+	debugf( "init_tcp_server: SO_REUSEADDR: %s.", strerror( errno ) );
 	CLOSE( fd );
 	return -1;
      }
@@ -135,14 +116,14 @@ int init_server_tcp( int port )
 
    if ( bind( fd, (struct sockaddr *) &sa, sizeof( sa ) ) < 0 )
      {
-	debugf( "init_server_tcp: bind: %s.", strerror( errno ) );
+	debugf( "init_tcp_server: bind: %s.", strerror( errno ) );
 	CLOSE( fd );
 	return -1;
      }
 
    if ( listen( fd, 1 ) < 0 )
      {
-	debugf( "init_server_tcp: listen: %s.", strerror( errno ) );
+	debugf( "init_tcp_server: listen: %s.", strerror( errno ) );
 	CLOSE( fd );
 	return -1;
      }
@@ -151,39 +132,35 @@ int init_server_tcp( int port )
 }
 
 
-int new_connection_udp ( int control, int port )
+int new_udp_connection ( int control, int port )
 {
    struct sockaddr_in addr, sa;
    static struct sockaddr_in sa_zero;
    unsigned int size;
    char buf[4096];
-   int desc, new_sock, bytes;
+   int new_sock, bytes, x = 1;
    CONN *c;
    
    size = sizeof( addr );
    
-   
-
    /*Receive a package from a new player*/
-   if ( ( desc = recvfrom ( control, buf, 4096, 0, ( struct sockaddr * ) &addr, &size ) ) < 0 )
+   if ( ( bytes = recvfrom ( control, buf, 4096, 0, ( struct sockaddr * ) &addr, &size ) ) < 0 )
      {
-	debugf ( "new_connection_udp: recvfrom: %s.", strerror( errno ) );
+	debugf ( "new_udp_connection: recvfrom: %s.", strerror( errno ) );
 	return 1;
      }
    
    /*Create a new socket for it*/
    if ( ( new_sock = socket( PF_INET, SOCK_DGRAM, 0 ) ) < 0 )
      {
-	debugf( "new_connection_udp: socket: %s.", strerror( errno ) );
+	debugf( "new_udp_connection: socket: %s.", strerror( errno ) );
 	return -1;
      }
-
-   
    
    if ( setsockopt( new_sock, SOL_SOCKET, SO_REUSEADDR,
 		    (char *) &x, sizeof( x ) ) < 0 )
      {
-	debugf( "new_connection_udp: SO_REUSEADDR: %s.", strerror( errno ) );
+	debugf( "new_udp_connection: SO_REUSEADDR: %s.", strerror( errno ) );
 	CLOSE( new_sock );
 	return -1;
      }
@@ -195,7 +172,7 @@ int new_connection_udp ( int control, int port )
    /*Binding...*/
    if ( bind( new_sock, (struct sockaddr *) &sa, sizeof( sa ) ) < 0 )
      {
-	debugf( "new_connection_udp: bind: %s.", strerror( errno ) );
+	debugf( "new_udp_connection: bind: %s.", strerror( errno ) );
 	CLOSE( new_sock );
 	return -1;
      }
@@ -203,9 +180,11 @@ int new_connection_udp ( int control, int port )
    
    if ( connect ( new_sock, ( struct sockaddr* )&addr, size ) < 0 )
      {
-	debugf ( "new_connection_udp: connect: %s.", strerror ( errno ) );
+	debugf ( "new_udp_connection: connect: %s.", strerror ( errno ) );
 	return 1;
      }
+   
+   debugf( "New UDP connection: %s", inet_ntoa( addr.sin_addr ) );
    
    /*Make a new connection*/
    c = calloc ( 1, sizeof ( CONN ) );
@@ -217,13 +196,13 @@ int new_connection_udp ( int control, int port )
    connections = c;
    
    /*Doing something with the package received...*/
-   parse_data( c, buf, desc );
+   parse_data( c, buf, bytes );
    
    return 0;
 }
 
 
-int new_connection_tcp( int control )
+int new_tcp_connection( int control )
 {
    struct sockaddr_in addr;
    unsigned int size;
@@ -233,11 +212,11 @@ int new_connection_tcp( int control )
    size = sizeof( addr );
    if ( ( desc = accept( control, (struct sockaddr *) &addr, &size) ) < 0 )
      {
-	debugf( "new_connection_tcp: accept: %s.", strerror( errno ) );
+	debugf( "new_tcp_connection: accept: %s.", strerror( errno ) );
 	return 1;
      }
    
-   debugf( "New connection_tcp: %s", inet_ntoa( addr.sin_addr ) );
+   debugf( "New TCP connection: %s", inet_ntoa( addr.sin_addr ) );
    
    /* In future, we could resolve it:
     * from = gethostbyaddr( (char *) &sock.sin_addr,
@@ -327,18 +306,20 @@ int main_loop( int port )
    fd_set in_set;
    fd_set out_set;
    fd_set exc_set;
-   int server_udp, server_tcp, max_fd;
+   int udp_server, tcp_server, max_fd;
    CONN *c;
    
-   server_udp = init_server( port );
-   server_tcp = init_server( port );
+#if defined(WIN32)
+   if ( init_wsa( ) < 0 )
+     return 1;
+#endif
    
-   if ( server_udp < 0 )
+   if ( ( tcp_server = init_tcp_server( port ) ) < 0 )
      return 1;
 
-   if ( server_tcp < 0 )
+   if ( ( udp_server = init_udp_server( port ) ) < 0 )
      return 1;
-
+   
    gettimeofday( &lasttick, NULL );
    
    while ( 1 )
@@ -347,17 +328,12 @@ int main_loop( int port )
 	FD_ZERO( &out_set );
 	FD_ZERO( &exc_set );
 	
-	FD_SET( server_udp, &in_set );
-	FD_SET( server_tcp, &in_set );
-	if ( server_udp > server_tcp )
-	  {
-	     max_fd = server_udp;
-	  }
+	FD_SET( udp_server, &in_set );
+	FD_SET( tcp_server, &in_set );
+	if ( udp_server > tcp_server )
+	  max_fd = udp_server;
 	else 
-	  {
-	     max_fd = server_tcp;
-	  }
-	
+	  max_fd = tcp_server;
 	
 	/* What descriptors do we want to select? */
 	for ( c = connections; c; c = c->next )
@@ -389,17 +365,17 @@ int main_loop( int port )
 	  }
 	
 	/* New connections. */
-	if ( FD_ISSET( server_udp, &in_set ) )
+	if ( FD_ISSET( udp_server, &in_set ) )
 	  {
-	     if ( new_connection_udp( server, port ) )
+	     if ( new_udp_connection( udp_server, port ) )
 	       return 1;
 	  }
-	if ( FD_ISSET( server_tcp, &in_set ) )
+	if ( FD_ISSET( tcp_server, &in_set ) )
 	  {
-	     if ( new_connection_tcp( server_tcp ) )
+	     if ( new_tcp_connection( tcp_server ) )
 	       return 1;
 	  }
-		
+	
 	/* Go through the connection list. */
 	for ( c = connections; c; c = c->next )
 	  if ( FD_ISSET( c->sock, &in_set ) )
