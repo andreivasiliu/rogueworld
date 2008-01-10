@@ -1,8 +1,22 @@
+/**
+ * \file rle.c
+ * \brief RLE Encoding utilities
+ * 
+ * This file handles compression and decompression of text, aimed at reducing
+ * the size of maps transferred via network.
+ */
+
 /* RLE Compression. */
 
 
-/* Encodes at most 'max' bytes into dest, including the terminating zero,
- * and returns 1 if it did not fit. */
+/**
+ * RLE Encoder
+ * Encodes at most 'max' bytes into dest, including the terminating zero,
+ * and returns 1 if it did not fit.
+ * @param src source buffer
+ * @param dest destination buffer
+ * @param max destination buffer's size
+*/
 int rle_encode( char *src, char *dest, int max )
 {
    unsigned char *s1, *s2, *d;
@@ -35,7 +49,13 @@ int rle_encode( char *src, char *dest, int max )
 }
 
 
-
+/**
+ * RLE Decoder (incomplete)
+ * Decode from src into dest.
+ * @param src source buffer
+ * @param dest destination buffer
+ * @return number of bytes written
+ */
 void rle_decode( unsigned char *src, unsigned char *dest )
 {
    int i, k, j;

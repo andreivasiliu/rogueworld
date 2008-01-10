@@ -1,4 +1,8 @@
-/* This handles players.. actually, it mostly only handles player commands,
+/**
+ * \file players.c
+ * 
+ * Player Handler
+ * This handles players.. actually, it mostly only handles player commands,
  * so it might be renamed later.
  */
 
@@ -10,10 +14,11 @@
 #include "common.h"
 
 
-/* List of logged-in players. */
+/** List of logged-in players. */
 PLAYER *players;
 
 
+/// Create a new, empty player object.
 PLAYER *create_player( char *name )
 {
    PLAYER *pl;
@@ -32,6 +37,11 @@ PLAYER *create_player( char *name )
 }
 
 
+
+/** Figure out a file name from a player name.
+ * @param name Player name
+ * @param dest Destination buffer
+ */
 void player_file( char *name, char *dest )
 {
    char *dir = DATA "/players/";
@@ -52,7 +62,10 @@ void player_file( char *name, char *dest )
 }
 
 
-
+/** Load a player object from a file.
+ * @param name Player name
+ * @return Player object
+ */
 PLAYER *load_player( char *name )
 {
    PLAYER *pl;
