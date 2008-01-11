@@ -79,7 +79,6 @@ void rle_decode( unsigned char *src, unsigned char *dest )
 
 
 
-#if 0
 void Bresenham_old(short x1, short y1, short x2, short y2,
 	       void (*delegate)( short y, short x, void *p ), void *p )
 {
@@ -92,7 +91,7 @@ void Bresenham_old(short x1, short y1, short x2, short y2,
    // Reverse lines where x1 > x2
    if (x1 > x2)
      {
-	Bresenham(x2, y2, x1, y1, delegate, p);
+	Bresenham_old(x2, y2, x1, y1, delegate, p);
 	return;
      }
    dx = x2 - x1;
@@ -127,7 +126,7 @@ void Bresenham_old(short x1, short y1, short x2, short y2,
 	  }
      }
 }
-#endif
+
 
 void Bresenham(short x0, short y0, short x1, short y1,
 	       void (*delegate)( short y, short x, void *p ), void *p )
@@ -150,8 +149,8 @@ void Bresenham(short x0, short y0, short x1, short y1,
    
    if ( x0 > x1 )
      {
-	//SWAP( x0, x1 );
-	//SWAP( y0, y1 );
+//	SWAP( x0, x1 );
+//	SWAP( y0, y1 );
 	inverse = 1;
      }
    

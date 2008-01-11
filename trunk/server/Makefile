@@ -2,7 +2,7 @@
 
 BIN += rworld
 OBJ += main.o comm.o rwp_common.o rwp_parse.o rwp_send.o players.o
-OBJ += events.o objects.o
+OBJ += events.o objects.o utils.o
 LIB += $(WINLIB)
 
 CFLAGS = -g -Wall
