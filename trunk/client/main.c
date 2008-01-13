@@ -69,26 +69,85 @@ int connect_user( char *name, char *hostname, int port )
 }
 
 
+void print_protocol( int type )
+{
+   /* UDP */
+   if ( type == 0 )
+     {
+	attrset( A_BOLD );
+	addch( '[' | A_NORMAL );
+	addstr( "UDP" );
+	addch( ']' | A_NORMAL );
+	attrset( A_NORMAL );
+	addstr( "  TCP" );
+     }
+   else
+     {
+	attrset( A_NORMAL );
+	addstr( " UDP  " );
+	attrset( A_BOLD );
+	addch( '[' | A_NORMAL );
+	addstr( "TCP" );
+	addch( ']' | A_NORMAL );
+	attrset( A_NORMAL );
+     }
+}
+
 
 int main( int argc, char *argv[] )
 {
+   const char *default_hostname = "localhost";
+   const char *default_port = "1623";
    char name[32];
+   char hostname[256];
    char port[16];
+   int protocol_type = 0;
+   int c;
    
    initscr( );
+   start_color( );
    cbreak( );
    nonl( );
    keypad( stdscr, TRUE );
    
-   echo( );
+   init_pair( 1, COLOR_BLACK, COLOR_BLACK );
+   
+   attrset( A_BOLD );
    mvaddstr( 2, 2, "Character name: " );
+   attrset( A_NORMAL );
+   echo( );
    getnstr( name, 20 );
-   
-   mvaddstr( 3, 2, "Server: localhost" );
-   mvaddstr( 4, 2, "Port: " );
-   getnstr( port, 5 );
-   
    noecho( );
+   
+   strcpy( port, "1623" );
+   /*
+   attrset( A_BOLD );
+   mvaddstr( 3, 2, "Server" );
+   mvaddstr( 4, 3, "[h] Host: " );
+   attrset( A_NORMAL );
+   addstr( default_hostname );
+   mvaddch( 4, 4, 'h' | COLOR_PAIR(1) | A_BOLD );
+   
+   attrset( A_BOLD );
+   mvaddstr( 5, 3, "[p] Port: " );
+   attrset( A_NORMAL );
+   addstr( default_port );
+   mvaddch( 5, 4, 'p' | COLOR_PAIR(1) | A_BOLD );
+   
+   attrset( A_BOLD );
+   mvaddstr( 6, 3, "[t] Type: " );
+   attrset( A_NORMAL );
+   print_protocol( protocol_type );
+   mvaddch( 6, 4, 't' | COLOR_PAIR(1) | A_BOLD );
+   
+   while ( 1 )
+     {
+	c = getch( );
+     }
+   
+   getnstr( port, 5 );
+    */
+   
    
    if ( connect_user( name, "127.0.0.1", atoi(port) ) )
      return 1;
