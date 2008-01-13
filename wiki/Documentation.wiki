@@ -11,5 +11,5 @@
 
    Comunicarea la nivelul serverului.
        
-
-      Comunicarea la nivel de server trebuie să permită tuturor clienţilor să realizeze conexiuni în acelaşi timp şi evident pe aceeaşi hartă suport. Acest server permite conectarea rapidă a clienţilor şi realizează în acelasşi timp şi o oarecare "gestiune" a pachetelor primite. Funcţia care face posibil acest lucru este main_loop(); Scopul ei este de a  iniţializa două servere ce acceptă conexiuni UDP şi respectiv conexiuni TCP în funcţie de alegerea făcută de client. La intervale mici de timp pot apare diferite modificări, cum ar fi conectarea unui nou client sau primirea unui pachet. Astfel, main_loop()  controlează atât mulţimea descriptorilor de sockets printr-o reconstrucţie a mulţimilor de descriptori şi un nou apel al funcţiei select(), cât şi lista de conexiuni astfel: verificarea unei noi conexiuni şi acceptarea acesteia în funcţie de tip( UDP / TCP ) prin apelul funcţiilor new_udp_connection(), respectiv new_tcp_connection(), şi, bineînţeles,  verificarea primirii unui nou pachet şi citirea acestuia prin apelul read_data(). 
+* main_loop()
+   * init_udp_server() 
