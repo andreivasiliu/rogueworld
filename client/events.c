@@ -42,8 +42,8 @@ void move_cursor( int y, int x )
    cursor_tick = 1;
    
    /* Don't send it too many times. Just once a tick. */
-   if ( !cursor_changed )
-     send_setcursor( cursor_y, cursor_x );
+//   if ( !cursor_changed )
+//     send_setcursor( cursor_y, cursor_x );
    cursor_changed = 1;
 }
 
@@ -80,10 +80,45 @@ void tick_event( )
    if ( cursor_changed )
      {
 	cursor_changed = 0;
-	send_setcursor( cursor_y, cursor_x );
+//	send_setcursor( cursor_y, cursor_x );
      }
    
    draw_interface( );
+}
+
+
+void check_spot( short pos_y, short pos_x, void *res )
+{
+   if ( map->map[pos_y*map->width+pos_x] != '.' )
+     *(int *)res = 0;
+}
+
+
+
+#define SQUARE(x) ((x)*(x))
+int dist( short y1, short x1, short y2, short x2 )
+{
+   return SQUARE( y1 - y2 ) + SQUARE( x1 - x2 );
+}
+
+
+int player_can_see( short pos_y, short pos_x )
+{
+   void Bresenham(short x1, short y1, short x2, short y2,
+		  void (*delegate)( short y, short x, void *p ), void *p );
+   int result = 1;
+   
+   if ( !player->body )
+     return 0;
+   
+   if ( dist( player->body->pos_y, player->body->pos_x,
+	      pos_y, pos_x ) >= 100 )
+     return 0;
+   
+   Bresenham( player->body->pos_x, player->body->pos_y,
+	      pos_x, pos_y, check_spot, &result );
+   
+   return result;
 }
 
 
@@ -95,8 +130,17 @@ void draw_map( )
      {
 	move( y, 0 );
 	for ( x = 0; x < map->width; x++ )
-	  addch( map->map[y*map->width+x] );
+	  {
+	     if ( !player_can_see( y, x ) )
+	       attrset( COLOR_PAIR(1) | A_BOLD );
+	     else
+	       attrset( A_NORMAL );
+	     
+	     addch( map->map[y*map->width+x] );
+	  }
      }
+   
+   attrset( A_NORMAL );
 }
 
 
@@ -116,8 +160,17 @@ void draw_objects( )
 }
 
 
+void draw_some_things( short y, short x, void *p )
+{
+   mvaddch( y, x, '*' );
+}
+
+
 void draw_cursor( )
 {
+   void Bresenham(short x1, short y1, short x2, short y2,
+		  void (*delegate)( short y, short x, void *p ), void *p );
+   
    if ( !cursor_tick || !player->body )
      return;
    
@@ -131,6 +184,9 @@ void draw_cursor( )
      return;
    
    mvaddch( cursor_y, cursor_x, '+' | A_BOLD );
+   
+   Bresenham( player->body->pos_x, player->body->pos_y, cursor_x, cursor_y,
+	      draw_some_things, 0 );
 }
 
 

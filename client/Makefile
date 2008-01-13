@@ -1,8 +1,8 @@
 # Generic Makefile for RW.
 
 BIN += rwclient
-OBJ += main.o comm_tcp.o rwp_common.o rwp_parse.o rwp_send.o update.o
-OBJ += events.o objects.o
+OBJ += main.o comm_udp.o rwp_common.o rwp_parse.o rwp_send.o update.o
+OBJ += events.o objects.o utils.o
 LIB += -lcurses $(WINLIB)
 
 CFLAGS = -g -Wall
