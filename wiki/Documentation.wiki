@@ -2,7 +2,7 @@
 
 = Introducere =
 
-     Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă de joc din categoria Roguelike, un RPG  text în stilul lui NetHack. Privit într-o manieră superficială, un  „roguelike” este de fapt o expunere  bidimensională a unei lumi virtuale cu diferite caracteristici ce conferă posibilitatea explorării ei.
+Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă de joc din categoria Roguelike, un RPG  text în stilul lui NetHack. Privit într-o manieră superficială, un  „roguelike” este de fapt o expunere  bidimensională a unei lumi virtuale cu diferite caracteristici ce conferă posibilitatea explorării ei.
 
 
 = Detalii =
