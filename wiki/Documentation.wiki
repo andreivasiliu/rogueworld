@@ -11,22 +11,5 @@
 
    Comunicarea la nivelul serverului.
        
-      Functii: 
 
-              - int init_udp_server( int port ) // Scop: iniţializarea unui server ce accepta conexiuni UDP pe un anumit port;
-
-              - int init_tcp_server( int port ) // Scop: iniţializarea unui server ce accepta conexiuni TCP pe un anumit port;
-
-              - int new_udp_connection ( int control, int port ) // Scop: acceptarea unei noi conexiuni UDP de pe portul control şi înregistrarea acesteia în lista de conexiuni; port este utilizat la iniţializarea unei noi structuri sin_add_in;
-
-              - int new_tcp_connection( int control ) // Scop: acceptarea unei noi conexiuni TCP de pe portul de control şi înregistrarea acesteia în lista de conexiuni;
-
-              - void destroy_connection( CONN *ze_unfortunate ) // Scop: distrugerea unei conexiuni şi actualizarea listei de conexiuni;
-
-              - int read_data( CONN *conn ) // Scop: citirea informaţiilor primite pentru conexiunea conn;
-
-              - void send_to_client( CONN *c, char *data, int bytes ) // Scop: trimiterea de informaţii către client;
-
-              - int main_loop( int port ) // Scop: iniţializarea a două servere ce acceptă conexiuni UDP şi respectiv conexiuni TCP în funcţie de alegerea făcută de client; pentru intervale mici de timp in care pot apare modificări, main_loop controlează atât mulţimea descriptorilor de sockets cât şi lista de conexiuni astfel: reactualizarea mulţimii de descriptori, verificarea unei noi conexiuni şi acceptarea acesteia în funcţie de tip( UDP / TCP ), verificarea pentru primirea unui pachet pe fiecare tip de conexiune şi citirea informaţiilor.
-
-
+      Comunicarea la nivel de server trebuie să asigure caracteristica de server concurent pentru a permite tuturor clienţilor să realizeze conexiuni în acelaşi timp şi evident pe aceeaşi hartă suport. Funcţia care face posibil acest lucru este main_loop(); Scopul ei este de a  iniţializa două servere ce acceptă conexiuni UDP şi respectiv conexiuni TCP în funcţie de alegerea făcută de client. La intervale mici de timp pot apare diferite modificări, cum ar fi conectarea unui nou client sau primirea unui pachet. Astfel, main_loop()  controlează atât mulţimea descriptorilor de sockets printr-o reconstrucţie a mulţimilor de descriptori şi un nou apel al funcţiei select(), cât şi lista de conexiuni astfel: verificarea unei noi conexiuni şi acceptarea acesteia în funcţie de tip( UDP / TCP ) prin apelul funcţiilor new_udp_connection(), respectiv new_tcp_connection(), şi, bineînţeles,  verificarea primirii unui nou pachet şi citirea acestuia prin apelul read_data(). 
