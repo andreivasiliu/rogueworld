@@ -11,5 +11,5 @@
 
    Comunicarea la nivelul serverului.
        
-* main_loop()
-   * init_udp_server() 
+  * main_loop()
+    * init_udp_server() 
