@@ -13,3 +13,16 @@
        
   * main_loop()
     * init_udp_server() 
+        * această funcţie creează un nou socket şi ascultă pe el eventualii clienţi UDP cu scopul de a adăuga noi clienţi în lista de conexiuni sau de a primi pachete pentru clienţii deja conectaţi;
+    * init_tcp_server()
+        * această funcţie creează un nou socket şi ascultă pe el eventualii clienţi TCP cu acelaţi scop; 
+    * while()
+      * creează o nouă mulţime de sockets verificare;
+      * se apelează select() pe mulţimea construită
+      * verifică:
+        * dacă există un nou client UDP apelează: new_udp_connection() - această funcţie 
+          adaugă noua conexiune UDP în lista existentă şi îi asociază un port remote
+        * dacă există un nou client TCP apelează: new_tcp_connection() - această funcţie 
+          adaugă noua conexiune TCP în lista existentă şi îi asociază un port remote
+        * dacă a sosit un nou pachet apelează read_data() - această funcţie citeste orice                                          
+          fel de pachet 
