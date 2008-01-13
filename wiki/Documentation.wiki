@@ -1,13 +1,13 @@
-#summary One-sentence summary of this page.
+#Documentaţie pentru Rogueworld
 
-= Introduction =
+= Introducere =
 
      Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă de joc din categoria Roguelike, un RPG  text în stilul lui NetHack. Privit într-o manieră superficială, un  „roguelike” este de fapt o expunere  bidimensională a unei lumi virtuale cu diferite caracteristici ce conferă posibilitatea explorării ei.
 
 
-= Details =
+= Detalii =
 
-     În această secţiune vom detalia anumite detalii din implementare. 
+     În această secţiune vom detalia anumite aspecte din implementare. 
 
    Comunicarea la nivelul serverului.
        
@@ -28,7 +28,5 @@
               - void send_to_client( CONN *c, char *data, int bytes ) // Scop: trimiterea de informaţii către client;
 
               - int main_loop( int port ) // Scop: iniţializarea a două servere ce acceptă conexiuni UDP şi respectiv conexiuni TCP în funcţie de alegerea făcută de client; pentru intervale mici de timp in care pot apare modificări, main_loop controlează atât mulţimea descriptorilor de sockets cât şi lista de conexiuni astfel: reactualizarea mulţimii de descriptori, verificarea unei noi conexiuni şi acceptarea acesteia în funcţie de tip( UDP / TCP ), verificarea pentru primirea unui pachet pe fiecare tip de conexiune şi citirea informaţiilor.
-
-
 
 
