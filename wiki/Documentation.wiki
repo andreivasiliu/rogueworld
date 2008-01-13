@@ -1,4 +1,4 @@
-#Documentaţie pentru Rogueworld
+#summary Documentaţie pentru Rogueworld
 
 = Introducere =
 
@@ -7,16 +7,16 @@
 
 = Detalii =
 
-     În această secţiune vom detalia anumite aspecte din implementare. 
+În această secţiune vom detalia anumite aspecte din implementare. 
 
-   Comunicarea la nivelul serverului.
-       
-  * main_loop()
-    * init_udp_server() 
+== Comunicarea la nivelul serverului. ==
+
+  * `main_loop()`
+    * `init_udp_server()`
         * această funcţie creează un nou socket şi ascultă pe el eventualii clienţi UDP cu scopul de a adăuga noi clienţi în lista de conexiuni sau de a primi pachete pentru clienţii deja conectaţi;
-    * init_tcp_server()
+    * `init_tcp_server()`
         * această funcţie creează un nou socket şi ascultă pe el eventualii clienţi TCP cu acelaţi scop; 
-    * while()
+    * `while()`
       * creează o nouă mulţime de sockets pentru verificare;
       * se apelează select() pe mulţimea construită;
       * verifică:
