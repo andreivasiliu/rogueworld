@@ -23,3 +23,16 @@ Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă de j
         * dacă există un nou client UDP apelează: `new_udp_connection()` - această funcţie adaugă noua conexiune UDP în lista existentă şi îi asociază un port remote;
         * dacă există un nou client TCP apelează: `new_tcp_connection()` - această funcţie adaugă noua conexiune TCP în lista existentă şi îi asociază un port remote;
         * dacă a sosit un nou pachet apelează `read_data()` - această funcţie citeste                        orice fel de pachet;
+
+
+
+== Retrimiterea pachetelor. ==
+
+  * `struct packet_header
+        {
+           int length;
+           int msg_id;
+           int msg_nr;
+           int obj_id;
+           int obj_nr;
+        };`
