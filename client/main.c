@@ -14,6 +14,7 @@ PLAYER *player;
 
 void die( char *reason )
 {
+   close_connection( reason );
    endwin( );
    puts( reason );
    
@@ -35,7 +36,7 @@ int enter_world( char *name )
 	  return 1;
      }
    
-   mvaddstr( 11, 2, "Ready. [ENTER] to begin, or anything else to leave.." );
+   mvaddstr( 13, 2, "Ready. [ENTER] to begin, or anything else to leave.." );
    
    c = getch( );
    
@@ -51,12 +52,14 @@ int enter_world( char *name )
 
 
 
-int connect_user( char *name, char *hostname, int port )
+int connect_user( char *name, char *hostname, int port, int protocol_type )
 {
-   mvaddstr( 6, 2, "Connecting..." );
+   move( 8, 2 );
+   clrtoeol( );
+   addstr( "Connecting..." );
    refresh( );
    
-   if ( connect_to_server( hostname, port ) )
+   if ( connect_to_server( hostname, port, protocol_type ) )
      return 1;
    
    addstr( " done." );
@@ -71,36 +74,25 @@ int connect_user( char *name, char *hostname, int port )
 
 void print_protocol( int type )
 {
+   move( 6, 13 );
+   
+   attrset( A_NORMAL );
+   
+   addch( '[' | A_BOLD );
    /* UDP */
    if ( type == 0 )
-     {
-	attrset( A_BOLD );
-	addch( '[' | A_NORMAL );
-	addstr( "UDP" );
-	addch( ']' | A_NORMAL );
-	attrset( A_NORMAL );
-	addstr( "  TCP" );
-     }
+     addstr( "UDP" );
    else
-     {
-	attrset( A_NORMAL );
-	addstr( " UDP  " );
-	attrset( A_BOLD );
-	addch( '[' | A_NORMAL );
-	addstr( "TCP" );
-	addch( ']' | A_NORMAL );
-	attrset( A_NORMAL );
-     }
+     addstr( "TCP" );
+   addch( ']' | A_BOLD );
 }
 
 
 int main( int argc, char *argv[] )
 {
-   const char *default_hostname = "localhost";
-   const char *default_port = "1623";
-   char name[32];
-   char hostname[256];
-   char port[16];
+   char name[32] = "";
+   char hostname[256] = "localhost";
+   char port[16] = "1623";
    int protocol_type = 0;
    int c;
    
@@ -111,45 +103,89 @@ int main( int argc, char *argv[] )
    keypad( stdscr, TRUE );
    
    init_pair( 1, COLOR_BLACK, COLOR_BLACK );
+   init_pair( 2, COLOR_CYAN, COLOR_BLACK );
    
    attrset( A_BOLD );
    mvaddstr( 2, 2, "Character name: " );
    attrset( A_NORMAL );
    echo( );
-   getnstr( name, 20 );
+   while ( !name[0] )
+     {
+	move( 2, 18 );
+	getnstr( name, 20 );
+     }
    noecho( );
    
-   strcpy( port, "1623" );
-   /*
    attrset( A_BOLD );
    mvaddstr( 3, 2, "Server" );
    mvaddstr( 4, 3, "[h] Host: " );
    attrset( A_NORMAL );
-   addstr( default_hostname );
-   mvaddch( 4, 4, 'h' | COLOR_PAIR(1) | A_BOLD );
+   addstr( hostname );
+   mvaddch( 4, 4, 'h' | COLOR_PAIR(2) | A_BOLD );
    
    attrset( A_BOLD );
    mvaddstr( 5, 3, "[p] Port: " );
    attrset( A_NORMAL );
-   addstr( default_port );
-   mvaddch( 5, 4, 'p' | COLOR_PAIR(1) | A_BOLD );
+   addstr( port );
+   mvaddch( 5, 4, 'p' | COLOR_PAIR(2) | A_BOLD );
    
    attrset( A_BOLD );
    mvaddstr( 6, 3, "[t] Type: " );
    attrset( A_NORMAL );
    print_protocol( protocol_type );
-   mvaddch( 6, 4, 't' | COLOR_PAIR(1) | A_BOLD );
+   mvaddch( 6, 4, 't' | COLOR_PAIR(2) | A_BOLD );
+   
+   mvaddstr( 8, 3, "Press [ENTER] to connect." );
    
    while ( 1 )
      {
+	move( 8, 28 );
+	
 	c = getch( );
+	
+	if ( c == 't' )
+	  {
+	     protocol_type = !protocol_type;
+	     print_protocol( protocol_type );
+	  }
+	if ( c == 'h' )
+	  {
+	     move( 4, 13 );
+	     clrtoeol( );
+	     echo();
+	     getnstr( hostname, 80 );
+	     noecho();
+	  }
+	if ( c == 'p' )
+	  {
+	     move( 5, 13 );
+	     clrtoeol( );
+	     echo();
+	     getnstr( port, 5 );
+	     noecho();
+	  }
+	if ( c == KEY_ENTER || c == '\n' || c == '\r' )
+	  {
+	     if ( atoi(port) < 1 || atoi(port) > 65535 )
+	       {
+		  move( 5, 13 );
+		  clrtoeol( );
+		  addstr( "(invalid port)" );
+		  continue;
+	       }
+	     else if ( !hostname[0] )
+	       {
+		  move( 4, 13 );
+		  clrtoeol( );
+		  addstr( "(invalid hostname)" );
+		  continue;
+	       }
+	     
+	     break;
+	  }
      }
    
-   getnstr( port, 5 );
-    */
-   
-   
-   if ( connect_user( name, "127.0.0.1", atoi(port) ) )
+   if ( connect_user( name, "127.0.0.1", atoi(port), protocol_type ) )
      return 1;
    
    draw_interface( );

@@ -42,8 +42,8 @@ void move_cursor( int y, int x )
    cursor_tick = 1;
    
    /* Don't send it too many times. Just once a tick. */
-//   if ( !cursor_changed )
-//     send_setcursor( cursor_y, cursor_x );
+   if ( !cursor_changed )
+     send_setcursor( cursor_y, cursor_x );
    cursor_changed = 1;
 }
 
@@ -80,7 +80,7 @@ void tick_event( )
    if ( cursor_changed )
      {
 	cursor_changed = 0;
-//	send_setcursor( cursor_y, cursor_x );
+	send_setcursor( cursor_y, cursor_x );
      }
    
    draw_interface( );
@@ -160,12 +160,6 @@ void draw_objects( )
 }
 
 
-void draw_some_things( short y, short x, void *p )
-{
-   mvaddch( y, x, '*' );
-}
-
-
 void draw_cursor( )
 {
    void Bresenham(short x1, short y1, short x2, short y2,
@@ -184,9 +178,6 @@ void draw_cursor( )
      return;
    
    mvaddch( cursor_y, cursor_x, '+' | A_BOLD );
-   
-   Bresenham( player->body->pos_x, player->body->pos_y, cursor_x, cursor_y,
-	      draw_some_things, 0 );
 }
 
 

@@ -62,3 +62,17 @@ void send_setcursor( int y, int x )
    send_packet( packet );
 }
 
+void send_close( char *reason )
+{
+   char *packet, *p;
+   
+   packet = new_packet( MSG_CLOSE, strlen( reason ) + 1 );
+   if ( !packet )
+     return;
+   
+   p = skip_header( packet );
+   p = write_zstring( p, reason );
+   
+   send_packet( packet );
+}
+

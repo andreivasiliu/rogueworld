@@ -17,13 +17,13 @@
 int server_socket;
 
 
-int connect_to_server( char *hostname, int port )
+int connect_to_server( char *hostname, int port, int type )
 {
    struct sockaddr_in server;
    struct hostent *host;
    int sock;
    
-   if ( ( sock = socket( PF_INET, SOCK_STREAM, 0 ) ) < 0 )
+   if ( ( sock = socket( PF_INET, type ? SOCK_STREAM : SOCK_DGRAM, 0 ) ) < 0 )
      {
 	perror( "socket" );
 	return 1;
@@ -85,6 +85,16 @@ void send_to_server( char *msg, int bytes )
      }
    
    write( server_socket, msg, bytes );
+}
+
+
+void close_connection( )
+{
+   if ( server_socket )
+     {
+	send_close( "Client quit." );
+	close( server_socket );
+     }
 }
 
 

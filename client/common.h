@@ -44,11 +44,12 @@ extern MAP *map;
 extern PLAYER *player;
 void die( char *reason );
 
-/* comm_tcp.c */
-int connect_to_server( char *hostname, int port );
+/* comm.c */
+int connect_to_server( char *hostname, int port, int type );
 int receive_one_packet( );
 void send_to_server( char *msg, int bytes );
 int main_loop( );
+void close_connection( );
 
 /* rwp_parse.c */
 void parse_data( char *data, int size );
@@ -57,6 +58,7 @@ void parse_data( char *data, int size );
 void send_login( char *name );
 void send_enterworld( );
 void send_setcursor( int y, int x );
+void send_close( char *reason );
 
 /* update.c */
 void update_userinfo( char *name, int pos_y, int pos_x );
