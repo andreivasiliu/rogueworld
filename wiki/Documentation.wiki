@@ -36,3 +36,10 @@ Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă a un
             `int obj_id;`
             `int obj_nr;`
         `};`
+
+  *  Acest al doilea strat primeste un pachet construit de cel de-al treilea strat şi îl trimite într-o coadă. Când primeşte un pachet MSG_CONFIRM<nr>, şterge toate pachetele până la acel număr şi retrimite toate pachetele cu un număr mai mare, dar numai câte un pachet pentru fiecare obj_id ( cel cu obj_nr cel mai mare ), dacă obj_id nu este 0.
+
+
+== Construcţia pachetelor ==
+
+  * Function
