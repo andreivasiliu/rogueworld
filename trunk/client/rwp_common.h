@@ -8,6 +8,7 @@
 #define MSG_SETCURSOR	5
 #define MSG_MOVEMENT	6
 #define MSG_DISAPPEAR	7
+#define MSG_CLOSE	8
 
 
 /* Packet-building functions. */

@@ -20,7 +20,7 @@ void update_userinfo( char *name, int pos_y, int pos_x )
    
    player->name = strdup( name );
    
-   mvaddstr( 8, 2, "Received userinfo." );
+   mvaddstr( 10, 2, "Received userinfo." );
    refresh( );
 }
 
@@ -37,7 +37,7 @@ void update_map( int height, int width, char *map_str )
    map->height = height;
    map->width = width;
    
-   mvaddstr( 9, 2, "Received map." );
+   mvaddstr( 11, 2, "Received map." );
    refresh( );
 }
 
