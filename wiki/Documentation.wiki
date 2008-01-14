@@ -2,7 +2,7 @@
 
 = Introducere =
 
-Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă a unui "engine" pentru un joc din categoria Roguelike, un RPG  text în stilul lui NetHack. Privit într-o manieră superficială, un  „roguelike” este de fapt o expunere  bidimensională a unei lumi virtuale cu diferite caracteristici ce conferă posibilitatea explorării ei. Proiectul de faţă înglobează partea poate cea mai preteţioasă a unui astfel de "engine" şi anume cod specific comunicării pe reţea, diferenţiat pe trei nivele distincte, iar comunicarea se face înlănţuit ( primul strat, 1, comunică doar cu nivelul reţea şi stratul 2, stratul 2 comunică cu straturile 1 şi 3, stratul 3 comunică cu stratul 2, acesta fiind singurul la care fucţiile jocului au acces ).
+Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă a unui "engine" pentru un joc din categoria Roguelike, un RPG  text în stilul lui NetHack. Privit într-o manieră superficială, un  „roguelike” este de fapt o expunere  bidimensională a unei lumi virtuale cu diferite caracteristici ce conferă posibilitatea explorării ei. Proiectul de faţă înglobează partea poate cea mai preteţioasă a unui astfel de "engine" şi anume cod specific comunicării pe reţea, diferenţiat pe trei nivele distincte, iar comunicarea se face înlănţuit ( primul strat, 1, comunică doar cu nivelul reţea şi stratul 2, stratul 2 comunică cu straturile 1 şi 3, stratul 3 comunică cu stratul 2, acesta fiind singurul la care funcţiile jocului au acces ).
 
 
 = Detalii =
