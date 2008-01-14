@@ -30,9 +30,9 @@ Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă de j
 
   * `struct packet_header`
         `{`
-           `int length;`
-           `int msg_id;`
-           `int msg_nr;`
-           `int obj_id;`
-           `int obj_nr;`
+            `int length;`
+            `int msg_id;`
+            `int msg_nr;`
+            `int obj_id;`
+            `int obj_nr;`
         `};`
