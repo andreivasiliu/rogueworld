@@ -8,17 +8,56 @@
 #define MSG_SETCURSOR	5
 #define MSG_MOVEMENT	6
 #define MSG_DISAPPEAR	7
+#define MSG_CLOSE	8
 
 
-/* Packet-building functions. */
-char *write_zstring( char *p, char *str );
-char *write_int8( char *p, char a );
-char *write_int32( char *p, int n );
-char *new_packet( int message_id, int packet_size );
-char *skip_header( char *packet );
 
-/* Packet-parsing functions. */
-char *read_zstring( char *p, char *dest, int max );
-char *read_int8( char *p, char *a );
-char *read_int32( char *p, int *dest );
+/* Structures. */
+typedef struct packet_data PACKET;
+typedef struct packet_queue_data PACKET_QUEUE;
 
+struct packet_data
+{
+   int length;
+   int msg_id;
+   int msg_nr;
+   int obj_id;
+   int obj_nr;
+   
+   char *raw;
+   
+   PACKET *next;
+};
+
+struct packet_queue_data
+{
+   int packet_count;
+   
+   CONN *connection;
+   PACKET *packets;
+};
+
+
+struct packet_header
+{
+   int length;
+   int msg_id;
+   int msg_nr;
+   int obj_id;
+   int obj_nr;
+};
+
+
+
+/* Some more defines. */
+#define PACKET_HEADER_SIZE      sizeof(struct packet_header)
+#define MAX_PACKET_SIZE         4096
+
+
+
+/* Interface to RWP. */
+void rwp_send_packet( PACKET_QUEUE *pqueue,
+		      int type, int objnr, char *types, ... );
+int get_packet_length( char *data );
+void rwp_parse_header( char *packet, struct packet_header *dest );
+int rwp_parse( char *packet, char *types, ... );

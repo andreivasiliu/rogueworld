@@ -195,6 +195,8 @@ int new_udp_connection ( int control, int port )
    c->next = connections;
    connections = c;
    
+   create_packet_queue( c );
+   
    /*Doing something with the package received...*/
    parse_data( c, buf, bytes );
    
@@ -233,6 +235,8 @@ int new_tcp_connection( int control )
    c->next = connections;
    connections = c;
    
+   create_packet_queue( c );
+   
    return 0;
 }
 
@@ -240,6 +244,8 @@ int new_tcp_connection( int control )
 void destroy_connection( CONN *ze_unfortunate )
 {
    CONN *c;
+   
+   destroy_packet_queue( ze_unfortunate );
    
    CLOSE( ze_unfortunate->sock );
    
@@ -293,7 +299,7 @@ int read_data( CONN *conn )
 }
 
 
-void send_to_client( CONN *c, char *data, int bytes )
+void send_to_connection( CONN *c, char *data, int bytes )
 {
    write( c->sock, data, bytes );
 }
