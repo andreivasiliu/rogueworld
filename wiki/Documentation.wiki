@@ -90,7 +90,7 @@ struct packet_queue_data
 
 == Comunicarea la nivelul clientului ==
 
-* `int main()`
+  * `int main()`
     *  validează logare;
     * `int connect_user( char *name, char *hostname, int port, int protocol_type )`
         * această funcţie conectează jucătorul name, la host-ul hostname, portul port utilizând protocolul protocol_type; 
