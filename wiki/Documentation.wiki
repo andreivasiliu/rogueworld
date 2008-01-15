@@ -11,7 +11,7 @@ Proiectul de faţă înglobează partea poate cea mai preteţioasă a unui astfe
 
 Serverul poate deservi mai mulţi clienţi în acelaşi timp indiferent de opţiunea aleasă de client; acesta are posibilitatea să aleagă o conexiune TCP sau una UDP în funcţie de preferinţe, cunoscând însă ce implică alegerea fiecăreia dintre ele.
 
-= Detalii -- partea de reţea -- =
+= Detalii (partea de reţea) =
 
 În această secţiune vom detalia anumite aspecte din implementare. 
 
