@@ -88,6 +88,7 @@ extern PLAYER *players;
 void pl_login( CONN *c, char *name );
 void pl_disconnected( PLAYER *, int by_error );
 void pl_enterworld( PLAYER * );
+void destroy_player( PLAYER * );
 
 /* events.c */
 void tick_event( );

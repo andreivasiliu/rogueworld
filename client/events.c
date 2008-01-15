@@ -68,6 +68,7 @@ void key_event( )
       case KEY_A1:
       case KEY_UP:	move_cursor( -1, 0 ); break;
       case KEY_DOWN:	move_cursor( 1, 0 ); break;
+      case 'q':		die( "Client closed." ); break;
      }
    
    draw_interface( );

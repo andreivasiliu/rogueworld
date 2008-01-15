@@ -179,6 +179,13 @@ void pl_login( CONN *c, char *name )
        }
    
    
+   for ( pl = players; pl; pl = pl->next )
+     if ( !strcmp( name, pl->name ) )
+       {
+	  kill_connection( c, "Connected from somewhere else." );
+	  break;
+       }
+   
    pl = load_player( name );
    
    if ( !pl )
