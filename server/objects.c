@@ -38,7 +38,7 @@ void destroy_object( OBJECT *obj )
    /* Unlink */
    if ( objects == obj )
      objects = objects->next;
-   else
+   else if ( objects )
      for ( prev = objects; prev->next; prev = prev->next )
        if ( prev->next == obj )
 	 {
@@ -61,20 +61,26 @@ OBJECT *create_persona( short pos_y, short pos_x )
 }
 
 
+void check_visibility( short pos_y, short pos_x, void *visible )
+{
+   if ( map.map[pos_y*map.width+pos_x] != '.' )
+     *(int*)visible = 0;
+}
+
 int spot_can_see_spot( int pos1_y, int pos1_x, int pos2_y, int pos2_x )
 {
    int dist2;
+   int visible = 1;
    
    /* For now, just check the distance, not the actual line of sight. */
    
    /* dist^2 = (x1 - x2)^2 + (y1 - y2)^2 */
    dist2 = SQUARE( pos1_y - pos2_y ) + SQUARE( pos1_x - pos2_x );
    
+   Bresenham( pos1_x, pos1_y, pos2_x, pos2_y, check_visibility, &visible );
+   
    /* For now, lets say that the line of sight extends up to 10 squares. */
-   if ( dist2 <= 100 )
-     return 1;
-   else
-     return 0;
+   return dist2 <= 100 && visible;
 }
 
 

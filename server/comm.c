@@ -283,7 +283,7 @@ int read_data( CONN *conn )
    if ( bytes < 0 )
      {
 	pl_disconnected( conn->player, 1 );
-	destroy_connection( conn );
+	//destroy_connection( conn );
 	
 	return 0;
      }
@@ -291,7 +291,7 @@ int read_data( CONN *conn )
    if ( bytes == 0 )
      {
 	pl_disconnected( conn->player, 0 );
-	destroy_connection( conn );
+	//destroy_connection( conn );
 	
 	return 0;
      }

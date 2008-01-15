@@ -100,3 +100,6 @@ void move_object( OBJECT *obj, short y, short x );
 void place_object( OBJECT *obj, short pos_y, short pos_x );
 void displace_object( OBJECT *obj );
 
+/* utils.c */
+void Bresenham(short x0, short y0, short x1, short y1,
+	       void (*delegate)( short y, short x, void *p ), void *p );

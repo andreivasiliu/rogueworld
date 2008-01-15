@@ -145,13 +145,13 @@ void Bresenham(short x0, short y0, short x1, short y1,
 	SWAP( x1, y1 );
      }
    
-   printf( "Steep: %d, x0>x1: %d\n", steep, x0 > x1 );
+//   printf( "Steep: %d, x0>x1: %d\n", steep, x0 > x1 );
    
    if ( x0 > x1 )
      {
-//	SWAP( x0, x1 );
-//	SWAP( y0, y1 );
-	inverse = 1;
+	SWAP( x0, x1 );
+	SWAP( y0, y1 );
+//	inverse = 1;
      }
    
    deltax = x1 - x0;

@@ -134,9 +134,9 @@ void destroy_player( PLAYER *pl )
    
    if ( pl == players )
      players = players->next;
-   else
+   else if ( players )
      {
-	for ( prev = players; prev; prev = prev->next )
+	for ( prev = players; prev->next; prev = prev->next )
 	  if ( prev->next == pl )
 	    {
 	       prev->next = pl->next;
@@ -182,7 +182,7 @@ void pl_login( CONN *c, char *name )
    for ( pl = players; pl; pl = pl->next )
      if ( !strcmp( name, pl->name ) )
        {
-	  kill_connection( c, "Connected from somewhere else." );
+	  kill_connection( pl->connection, "Connected from somewhere else." );
 	  break;
        }
    
