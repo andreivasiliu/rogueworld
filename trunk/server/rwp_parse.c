@@ -35,6 +35,14 @@ void parse_packet( CONN *c, char *packet, int size )
 	  return;
 	pl_login( c, name );
      }
+   else if ( mid == MSG_CLOSE )
+     {
+	char *reason;
+	if ( !rwp_parse( packet, "z", &reason ) )
+	  return;
+	
+	kill_connection( c, reason );
+     }
    else if ( !c->player )
      {
 	debugf( "Message (%d) on non-player connection.", mid );
@@ -55,6 +63,7 @@ void parse_packet( CONN *c, char *packet, int size )
 	pl->cursor_y = cursor_y;
 	pl->cursor_x = cursor_x;
      }
+   
    else
      debugf( "Message ID (%d) unknown.", mid );
 }

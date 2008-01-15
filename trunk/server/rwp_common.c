@@ -37,7 +37,7 @@ int rwp_parse( char *packet, char *types, ... )
 	       return 0;
 	     
 	     idest = va_arg( args, int * );
-	     *idest = *(int *)p;
+	     *idest = ntohl( *(int *)p );
 	     p += 4;
 	  }
 	if ( *types == 'z' )
@@ -235,13 +235,10 @@ void rwp_send_packet( PACKET_QUEUE *pqueue,
    va_end( args );
    
    if ( len > MAX_PACKET_SIZE )
-     {
-	debugf( "Attempted to send a huge packet!" );
-	return;
-     }
+     return;
    
    /* Go back and write the header. */
-   packet = rwp_forge_packet( buf, len, type, objnr, pqueue );
+   packet = rwp_forge_packet( buf, type, len, objnr, pqueue );
    
    rwp_really_send_packet( packet, pqueue );
 }

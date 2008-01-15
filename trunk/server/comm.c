@@ -247,6 +247,9 @@ void destroy_connection( CONN *ze_unfortunate )
    
    destroy_packet_queue( ze_unfortunate );
    
+   if ( ze_unfortunate->player )
+     destroy_player( ze_unfortunate->player );
+   
    CLOSE( ze_unfortunate->sock );
    
    /* First one in the chain. */
