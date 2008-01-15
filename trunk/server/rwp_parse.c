@@ -112,7 +112,19 @@ void parse_data( CONN *c, char *data, int size )
 {
    int packet_size;
    
+   if ( size < PACKET_HEADER_SIZE )
+     {
+	debugf( "Mini-packets not allowed. This connection is going buggy..." );
+	return;
+     }
+   
    packet_size = get_packet_length( data );
+   
+   if ( packet_size == 0 )
+     {
+	debugf( "Zero-sized packet? That's silly..." );
+	return;
+     }
    
    if ( packet_size == size )
      {

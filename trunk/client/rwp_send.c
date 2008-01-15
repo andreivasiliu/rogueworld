@@ -2,13 +2,42 @@
 
 
 #include <stdlib.h>
-#include <arpa/inet.h>
 #include <string.h>
 
 #include "common.h"
 #include "rwp_common.h"
 
 
+
+void send_login( char *name )
+{
+   rwp_send_packet( server->pqueue, MSG_LOGIN, 0,
+		    "z", name );
+}
+
+
+void send_enterworld( )
+{
+   rwp_send_packet( server->pqueue, MSG_ENTERWORLD, 0,
+		    "" );
+}
+
+
+void send_setcursor( int y, int x )
+{
+   rwp_send_packet( server->pqueue, MSG_SETCURSOR, 0,
+		    "11", y, x );
+}
+
+void send_close( char *reason )
+{
+   rwp_send_packet( server->pqueue, MSG_CLOSE, 0,
+		    "z", reason );
+}
+
+
+// OLD CODE - Ignore
+#if 0
 
 void send_packet( char *packet )
 {
@@ -76,3 +105,4 @@ void send_close( char *reason )
    send_packet( packet );
 }
 
+#endif
