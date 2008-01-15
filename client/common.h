@@ -91,3 +91,6 @@ extern OBJECT *objects;
 void object_movement( int obj_nr, int obj_type, short pos_y, short pos_x );
 void object_disappeared( int obj_nr );
 
+/* utils.c */
+void Bresenham(short x0, short y0, short x1, short y1,
+	       void (*delegate)( short y, short x, void *p ), void *p );
