@@ -104,4 +104,3 @@ struct packet_queue_data
             * citeşte un pachet şi-l despachetează apelând `parse_data( )`
           * altfel apelează `key_event( )`
             * actualizează harta în urma apăsării unei taste
-
