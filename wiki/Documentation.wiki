@@ -12,7 +12,7 @@ Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă a un
   * Toate funcţiile sunt descrise atât în server cât şi în client în două fişiere : `common.h`, respectiv `rwp_common.h`. Ele conţin toate macro-urile, funcţiile şi structurile necesare ce gestionează jucatori, evenimente, obiecte şi operaţiile de trimitere/primire de pachete. Funcţiile sunt grupate pe categorii şi sunt însoţite de un comentariu ce identifică fişierul sursă în care se află implementarea acestora.
   * Serverul poate deservi mai mulţi clienţi în acelaşi timp indiferent de opţiunea aleasă de client; acesta are posibilitatea să aleagă o conexiune TCP sau una UDP în funcţie de preferinţe, cunoscând însă ce implică alegerea fiecăreia dintre ele.
 
-= Detalii =
+= Detalii -- partea de reţea -- =
 
 În această secţiune vom detalia anumite aspecte din implementare. 
 
@@ -23,7 +23,7 @@ Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă a un
         * această funcţie creează un nou socket şi ascultă pe el eventualii clienţi UDP cu scopul de a adăuga noi clienţi în lista de conexiuni sau de a primi pachete pentru clienţii deja conectaţi;
     * `init_tcp_server()`
         * această funcţie creează un nou socket şi ascultă pe el eventualii clienţi TCP cu acelaţi scop ca mai sus; 
-    * `while()`
+    * `while( 1 )`
       * creează o nouă mulţime de sockets pentru verificare;
       * se apelează `select()` pe mulţimea construită;
       * verifică:
@@ -83,4 +83,25 @@ struct packet_queue_data
   * Alte funcţii folosite:
    
     * `int get_packet_length( char *data );`
+      * această funcţie returnează lungimea pachetului;
     * `void rwp_parse_header( char *packet, struct packet_header *dest );` 
+      * această funcţie are rolul de a "despacheta" headetul unui pachet;
+
+
+== Comunicarea la nivelul clientului ==
+
+* `int main()`
+    *  validează logare;
+    * `int connect_user( char *name, char *hostname, int port, int protocol_type )`
+        * această funcţie conectează jucătorul name, la host-ul hostname, portul port utilizând protocolul protocol_type; 
+    * `draw_interface( ) /* desenează interfaţa */`
+    * `main_loop()`
+      * `while( 1 )`
+        * creează o nouă mulţime de sockets;
+        * se apelează `select( )` pe mulţimea construită;
+        * verifică:        
+          * dacă s-a primit un pachet apelează `receive_one_packet( )` 
+            * citeşte un pachet şi-l despachetează apelând `parse_data( )`
+          * altfel apelează `key_event( )`
+            * actualizează harta în urma apăsării unei taste
+
