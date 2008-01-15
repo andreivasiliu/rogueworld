@@ -58,12 +58,11 @@ struct packet_queue_data
 
 == Operaţii asupra pachetelor ==
 
-  * Funcţii folosite:
-
-    * `int rwp_parse( char *packet, char *types, ... )` 
-      * această funcţie asigură integritatea şi despachetarea pachetelor; ea trebuie să primească un string de forma "4411z", apoi un numar variabil de parametri, de tipul int (4), char (1), sau string (z);
-    * `void rwp_send_packet( PACKET_QUEUE *pqueue,int type, int objnr, char *types, ... )`
-      * această funcţie asigură construcţia şi trimiterea pachetelor; funcţionarea ei este asemeni funcţiei de mai sus;
+Funcţii folosite:
+  * `int rwp_parse( char *packet, char *types, ... )` 
+    * această funcţie asigură integritatea şi despachetarea pachetelor; ea trebuie să primească un string de forma "4411z", apoi un numar variabil de parametri, de tipul int (4), char (1), sau string (z);
+  * `void rwp_send_packet( PACKET_QUEUE *pqueue,int type, int objnr, char *types, ... )`
+    * această funcţie asigură construcţia şi trimiterea pachetelor; funcţionarea ei este asemeni funcţiei de mai sus;
 
 
 == Comunicarea la nivelul clientului ==
