@@ -11,6 +11,7 @@
 typedef struct player_data PLAYER;
 typedef struct map_data MAP;
 typedef struct object_data OBJECT;
+typedef struct connection_data CONN;
 
 struct player_data
 {
@@ -36,6 +37,14 @@ struct object_data
    OBJECT **prev, *next;
 };
 
+struct connection_data
+{
+   int socket;
+   
+   struct packet_queue_data *pqueue;
+};
+
+
 
 /* Prototypes */
 
@@ -45,9 +54,11 @@ extern PLAYER *player;
 void die( char *reason );
 
 /* comm.c */
+extern CONN *server;
 int connect_to_server( char *hostname, int port, int type );
 int receive_one_packet( );
 void send_to_server( char *msg, int bytes );
+void send_to_connection( CONN *c, char *msg, int bytes );
 int main_loop( );
 void close_connection( );
 
@@ -60,8 +71,12 @@ void send_enterworld( );
 void send_setcursor( int y, int x );
 void send_close( char *reason );
 
+/* rwp_common.c */
+void create_packet_queue( CONN * );
+void destroy_packet_queue( CONN * );
+
 /* update.c */
-void update_userinfo( char *name, int pos_y, int pos_x );
+void update_userinfo( char *name );
 void update_map( int height, int width, char *map );
 
 /* events.c */

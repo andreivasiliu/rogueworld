@@ -10,7 +10,7 @@
 #include "common.h"
 
 
-void update_userinfo( char *name, int pos_y, int pos_x )
+void update_userinfo( char *name )
 {
    if ( !player )
      player = calloc( 1, sizeof( PLAYER ) );
