@@ -7,10 +7,9 @@ Rogueworld  este rezultatul unei încercări de a rescrie o nouă variantă a un
 
 = Specificaţii =
 
-  * Proiectul de faţă înglobează partea poate cea mai preteţioasă a unui astfel de "engine" şi anume codul specific comunicării pe reţea, împărţirea şi distribuirea pachetelor de informaţii;
-  * Rogueworld poate fi continuat de orice doritor care deşi nu are suficiente cunoştiinţe despre programarea pe reţea poate continua nestigherit dezvoltarea unei noi lumi.
-  * Toate funcţiile sunt descrise atât în server cât şi în client în două fişiere : `common.h`, respectiv `rwp_common.h`. Ele conţin toate macro-urile, funcţiile şi structurile necesare ce gestionează jucatori, evenimente, obiecte şi operaţiile de trimitere/primire de pachete. Funcţiile sunt grupate pe categorii şi sunt însoţite de un comentariu ce identifică fişierul sursă în care se află implementarea acestora.
-  * Serverul poate deservi mai mulţi clienţi în acelaşi timp indiferent de opţiunea aleasă de client; acesta are posibilitatea să aleagă o conexiune TCP sau una UDP în funcţie de preferinţe, cunoscând însă ce implică alegerea fiecăreia dintre ele.
+Proiectul de faţă înglobează partea poate cea mai preteţioasă a unui astfel de "engine" şi anume codul specific comunicării pe reţea, împărţirea şi distribuirea pachetelor de informaţii;
+
+Serverul poate deservi mai mulţi clienţi în acelaşi timp indiferent de opţiunea aleasă de client; acesta are posibilitatea să aleagă o conexiune TCP sau una UDP în funcţie de preferinţe, cunoscând însă ce implică alegerea fiecăreia dintre ele.
 
 = Detalii -- partea de reţea -- =
 
@@ -47,17 +46,6 @@ struct packet_header
 }}}
 
 {{{
-struct packet_header
-{
-   int length;
-   int msg_id;
-   int msg_nr;
-   int obj_id;
-   int obj_nr;
-};
-}}}
-
-{{{
 struct packet_queue_data
 {
    int packet_count;
@@ -66,9 +54,6 @@ struct packet_queue_data
    PACKET *packets;
 };
 }}}
-
-
-  *  Acest al doilea strat primeste un pachet construit de cel de-al treilea strat şi îl trimite într-o coadă. Când primeşte un pachet MSG_CONFIRM<nr>, şterge toate pachetele până la acel număr şi retrimite toate pachetele cu un număr mai mare, dar numai câte un pachet pentru fiecare obj_id ( cel cu obj_nr cel mai mare ), dacă obj_id nu este 0.
 
 
 == Operaţii asupra pachetelor ==
@@ -80,13 +65,6 @@ struct packet_queue_data
     * `void rwp_send_packet( PACKET_QUEUE *pqueue,int type, int objnr, char *types, ... )`
       * această funcţie asigură construcţia şi trimiterea pachetelor; funcţionarea ei este asemeni funcţiei de mai sus;
 
-  * Alte funcţii folosite:
-   
-    * `int get_packet_length( char *data );`
-      * această funcţie returnează lungimea pachetului;
-    * `void rwp_parse_header( char *packet, struct packet_header *dest );` 
-      * această funcţie are rolul de a "despacheta" headetul unui pachet;
-
 
 == Comunicarea la nivelul clientului ==
 
@@ -97,10 +75,7 @@ struct packet_queue_data
     * `draw_interface( ) /* desenează interfaţa */`
     * `main_loop()`
       * `while( 1 )`
-        * creează o nouă mulţime de sockets;
-        * se apelează `select( )` pe mulţimea construită;
-        * verifică:        
-          * dacă s-a primit un pachet apelează `receive_one_packet( )` 
-            * citeşte un pachet şi-l despachetează apelând `parse_data( )`
-          * altfel apelează `key_event( )`
-            * actualizează harta în urma apăsării unei taste
+        * dacă s-a primit un pachet apelează `receive_one_packet( )` 
+          * citeşte un pachet şi-l despachetează apelând `parse_data( )`
+        * altfel apelează `key_event( )`
+          * actualizează harta în urma apăsării unei taste
