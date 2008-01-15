@@ -6,6 +6,62 @@
 #include "rwp_common.h"
 
 
+void parse_packet( CONN *c, char *packet, int size )
+{
+   PLAYER *pl = c->player;
+   struct packet_header header;
+   int mid;
+   
+   if ( size < PACKET_HEADER_SIZE )
+     {
+	debugf( "Packet too short!" );
+	return;
+     }
+   
+   rwp_parse_header( packet, &header );
+   
+   if ( size != header.length )
+     {
+	debugf( "Packet size invalid!" );
+	return;
+     }
+   
+   mid = header.msg_id;
+   
+   if ( mid == MSG_LOGIN )
+     {
+	char *name;
+	if ( !rwp_parse( packet, "z", &name ) )
+	  return;
+	pl_login( c, name );
+     }
+   else if ( !c->player )
+     {
+	debugf( "Message (%d) on non-player connection.", mid );
+	return;
+     }
+   else if ( mid == MSG_ENTERWORLD )
+     {
+	if ( !rwp_parse( packet, "" ) )
+	  return;
+	pl_enterworld( pl );
+     }
+   else if ( mid == MSG_SETCURSOR )
+     {
+	char cursor_y, cursor_x;
+	if ( !rwp_parse( packet, "11", &cursor_y, &cursor_x ) )
+	  return;
+	
+	pl->cursor_y = cursor_y;
+	pl->cursor_x = cursor_x;
+     }
+   else
+     debugf( "Message ID (%d) unknown.", mid );
+}
+
+
+// OLD CODE - Ignore
+#if 0
 
 void parse_packet( CONN *c, char *packet, int size )
 {
@@ -49,12 +105,14 @@ void parse_packet( CONN *c, char *packet, int size )
      debugf( "Message ID (%d) unknown.", mid );
 }
 
+#endif
+
 
 void parse_data( CONN *c, char *data, int size )
 {
    int packet_size;
    
-   read_int32( data, &packet_size );
+   packet_size = get_packet_length( data );
    
    if ( packet_size == size )
      {
@@ -72,5 +130,4 @@ void parse_data( CONN *c, char *data, int size )
 	debugf( "Reported size: %d. Actual size: %d.", packet_size, size );
      }
 }
-
 

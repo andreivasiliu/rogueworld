@@ -32,6 +32,7 @@ struct connection_data
 {
    int sock;
    PLAYER *player;
+   struct packet_queue_data *pqueue;
    
    CONN *next;
 };
@@ -66,17 +67,21 @@ void debugf( char *, ... );
 /* comm.c */
 extern int main_loop( int );
 void destroy_connection( CONN * );
-void send_to_client( CONN *, char *, int );
+void send_to_connection( CONN *, char *, int );
 
 /* rwp_parse.c */
 void parse_data( CONN *, char *, int );
 
-/* rwp_send */
+/* rwp_send.c */
 void kill_connection( CONN *, char * );
 void send_map( CONN *c, MAP *map );
 void send_userinfo( CONN *c, PLAYER *player );
 void send_movement( PLAYER *pl, OBJECT *obj, short pos_y, short pos_x );
 void send_disappear( PLAYER *pl, OBJECT *obj );
+
+/* rwp_common.c */
+void create_packet_queue( CONN * );
+void destroy_packet_queue( CONN * );
 
 /* players.c */
 extern PLAYER *players;

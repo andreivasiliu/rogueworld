@@ -3,13 +3,65 @@
 
 
 #include <stdlib.h>
-#include <arpa/inet.h>
 #include <string.h>
 
 #include "common.h"
 #include "rwp_common.h"
 
 
+
+void send_close( CONN *c, char *reason )
+{
+   rwp_send_packet( c->pqueue, MSG_CLOSE, 0,
+		    "z", reason );
+}
+
+
+void kill_connection( CONN *c, char *msg )
+{
+   send_close( c, msg );
+   
+   destroy_connection( c );
+}
+
+
+void send_map( CONN *c, MAP *map )
+{
+   rwp_send_packet( c->pqueue, MSG_MAP, 0,
+		    "11z", map->height, map->width, map->map );
+}
+
+
+void send_userinfo( CONN *c, PLAYER *player )
+{
+   rwp_send_packet( c->pqueue, MSG_USERINFO, 0,
+		    "z", player->name );
+}
+
+
+void send_movement( PLAYER *pl, OBJECT *obj, short pos_y, short pos_x )
+{
+   int type;
+   
+   if ( pl->persona == obj )
+     type = OBJ_YOU;
+   else
+     type = obj->type;
+   
+   rwp_send_packet( pl->connection->pqueue, MSG_MOVEMENT, 0,
+		    "4411", obj->vnum, type, pos_y, pos_x );
+}
+
+void send_disappear( PLAYER *pl, OBJECT *obj )
+{
+   rwp_send_packet( pl->connection->pqueue, MSG_DISAPPEAR, 0,
+		    "4", obj->vnum );
+}
+
+
+
+// OLD VERSION - Ignore this
+#if 0
 
 void send_packet( CONN *c, char *packet )
 {
@@ -20,10 +72,29 @@ void send_packet( CONN *c, char *packet )
 }
 
 
+void send_close( CONN *c, char *reason )
+{
+   char *packet, *p;
+   
+   packet = new_packet( MSG_CLOSE, strlen( reason ) + 1 );
+   if ( !packet )
+     return;
+   
+   p = skip_header( packet );
+   p = write_zstring( p, reason );
+   
+   send_packet( c, packet );
+   
+   // New;
+   
+   rwp_send_packet( c->pqueue, MSG_CLOSE, 0,
+		    "z", reason );
+}
+
 
 void kill_connection( CONN *c, char *msg )
 {
-   // send kill packet and message
+   send_close( c, msg );
    
    destroy_connection( c );
 }
@@ -98,3 +169,4 @@ void send_disappear( PLAYER *pl, OBJECT *obj )
    send_packet( pl->connection, packet );
 }
 
+#endif
