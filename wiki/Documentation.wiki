@@ -55,6 +55,7 @@ struct packet_queue_data
 };
 }}}
 
+Detaliile complete sa afla in pagina ProtocolSpecification.
 
 == Operaţii asupra pachetelor ==
 
