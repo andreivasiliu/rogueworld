@@ -36,9 +36,11 @@ Packet Data Types:
 
 Global Packet Header:
 {{{
- <int32><int32><int32>
-  ^      ^      ^-- message ID (mid)
-  |      \-- message number
+ <int32><int32><int32><int32><int32>
+  ^      ^      ^      ^      ^-- object number
+  |      |      |      \-- object ID
+  |      |      \-- message number
+  |      \-- message ID (mid)
   \-- message length
 }}}
 
